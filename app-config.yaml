@@ -1,9 +1,9 @@
 app:
-  title: Scaffolded Backstage App
+  title: CDCR Development Portal
   baseUrl: http://localhost:3000
 
 organization:
-  name: My Company
+  name: CDCR
 
 backend:
   # Used for enabling authentication, secret is shared by all backend plugins
@@ -67,6 +67,12 @@ auth:
   providers:
     # See https://backstage.io/docs/auth/guest/provider
     guest: {}
+    github:
+      development:
+        clientId: ${AUTH_GITHUB_CLIENT_ID}
+        clientSecret: ${AUTH_GITHUB_CLIENT_SECRET}
+        ## uncomment if using GitHub Enterprise
+        # enterpriseInstanceUrl: ${AUTH_GITHUB_ENTERPRISE_INSTANCE_URL}
 
 scaffolder:
   # see https://backstage.io/docs/features/software-templates/configuration for software template options
@@ -76,11 +82,34 @@ catalog:
     entityFilename: catalog-info.yaml
     pullRequestBranchName: backstage-integration
   rules:
-    - allow: [Component, System, API, Resource, Location]
+    - allow: [Component, System, API, Resource, Location, User, Group]
   locations:
+    # CDCR Teams and Users
+    - type: file
+      target: ../../catalog/cdcr-teams.yaml
+      rules:
+        - allow: [User, Group]
+    
+    # CDCR Applications
+    - type: file
+      target: ../../catalog/discharge-custody-check.yaml
+      rules:
+        - allow: [Component, System, Group]
+    
+    - type: file
+      target: ../../catalog/coast-system.yaml
+      rules:
+        - allow: [Component, System, API, Group]
+
     # Local example data, file locations are relative to the backend process, typically `packages/backend`
     - type: file
       target: ../../examples/entities.yaml
+
+    # CDCR Service Template
+    - type: file
+      target: ../../templates/cdcr-service/template.yaml
+      rules:
+        - allow: [Template]
 
     # Local example template
     - type: file
@@ -109,6 +138,19 @@ catalog:
 
 kubernetes:
   # see https://backstage.io/docs/features/kubernetes/configuration for kubernetes configuration options
+  # Kubernetes integration is disabled until cluster credentials are configured
+  # Uncomment and configure the clusters below when ready
+  # serviceLocatorMethod:
+  #   type: 'multiTenant'
+  # clusterLocatorMethods:
+  #   - type: 'config'
+  #     clusters:
+  #       - name: dev
+  #         url: ${KUBERNETES_DEV_URL}
+  #         authProvider: 'serviceAccount'
+  #         skipTLSVerify: false
+  #         serviceAccountToken: ${KUBERNETES_DEV_SA_TOKEN}
+  #         caData: ${KUBERNETES_DEV_CA_DATA}
 
 # see https://backstage.io/docs/permissions/getting-started for more on the permission framework
 permission:

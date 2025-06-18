@@ -1,0 +1,30 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: ${{ values.name }}
+  title: ${{ values.name | title }}
+  description: ${{ values.description }}
+  annotations:
+    github.com/project-slug: ${{ values.repoUrl | projectSlug }}
+    backstage.io/source-location: url:${{ values.repoUrl }}
+    backstage.io/techdocs-ref: dir:.
+    # Add when ready:
+    # backstage.io/kubernetes-id: ${{ values.name }}
+    # backstage.io/kubernetes-namespace: ${{ values.name }}
+    # backstage.io/kubernetes-label-selector: 'app=${{ values.name }}'
+  tags:
+    - cdcr
+    {% if values.system %}
+    - ${{ values.system }}
+    {% endif %}
+  links:
+    - url: ${{ values.repoUrl }}
+      title: Repository
+      icon: github
+spec:
+  type: ${{ values.type }}
+  lifecycle: ${{ values.lifecycle }}
+  owner: ${{ values.owner }}
+  {% if values.system %}
+  system: ${{ values.system }}
+  {% endif %}

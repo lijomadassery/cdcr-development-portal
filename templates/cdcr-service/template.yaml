@@ -1,0 +1,121 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: cdcr-service-template
+  title: CDCR Service Template
+  description: Create a new CDCR service with standardized structure
+  tags:
+    - recommended
+    - cdcr
+    - service
+spec:
+  owner: platform-team
+  type: service
+  parameters:
+    - title: Service Information
+      required:
+        - name
+        - description
+        - owner
+      properties:
+        name:
+          title: Service Name
+          type: string
+          description: Unique name for your service (lowercase, no spaces)
+          pattern: '^[a-z0-9-]+$'
+        description:
+          title: Description
+          type: string
+          description: Brief description of what this service does
+        owner:
+          title: Team Owner
+          type: string
+          description: Which CDCR team owns this service
+          enum:
+            - cdcr-dai
+            - cdcr-ams
+            - platform-team
+            - data-team
+            - integration-team
+            - security-team
+        system:
+          title: System
+          type: string
+          description: Which system does this service belong to?
+          default: ''
+
+    - title: GitHub Repository
+      required:
+        - repoUrl
+      properties:
+        repoUrl:
+          title: Repository Location
+          type: string
+          ui:field: RepoUrlPicker
+          ui:options:
+            allowedHosts:
+              - github.com
+
+    - title: Service Configuration
+      properties:
+        lifecycle:
+          title: Lifecycle Stage
+          type: string
+          description: Current lifecycle stage of the service
+          default: development
+          enum:
+            - experimental
+            - development
+            - production
+            - deprecated
+        type:
+          title: Service Type
+          type: string
+          description: What type of service is this?
+          default: service
+          enum:
+            - service
+            - website
+            - library
+            - documentation
+
+  steps:
+    - id: fetch-base
+      name: Fetch Base Template
+      action: fetch:template
+      input:
+        url: ./content
+        values:
+          name: ${{ parameters.name }}
+          description: ${{ parameters.description }}
+          owner: ${{ parameters.owner }}
+          system: ${{ parameters.system }}
+          lifecycle: ${{ parameters.lifecycle }}
+          type: ${{ parameters.type }}
+          repoUrl: ${{ parameters.repoUrl }}
+
+    - id: publish
+      name: Publish to GitHub
+      action: publish:github
+      input:
+        repoUrl: ${{ parameters.repoUrl }}
+        description: ${{ parameters.description }}
+        defaultBranch: main
+        gitCommitMessage: 'Initial commit: Created from CDCR service template'
+        gitAuthorName: 'CDCR Backstage'
+        gitAuthorEmail: 'backstage@cdcr.ca.gov'
+
+    - id: register
+      name: Register in Catalog
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: '/catalog-info.yaml'
+
+  output:
+    links:
+      - title: Repository
+        url: ${{ steps.publish.output.remoteUrl }}
+      - title: Open in catalog
+        icon: catalog
+        entityRef: ${{ steps.register.output.entityRef }}

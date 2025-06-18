@@ -1,0 +1,103 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backstage
+  namespace: backstage
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backstage
+  template:
+    metadata:
+      labels:
+        app: backstage
+    spec:
+      serviceAccountName: backstage
+      containers:
+      - name: backstage
+        image: backstage:latest  # You'll build this image
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: http
+          containerPort: 7007
+        envFrom:
+        - secretRef:
+            name: backstage-secrets
+        env:
+        - name: APP_CONFIG_app_baseUrl
+          value: "https://backstage.cdcr.ca.gov"
+        - name: APP_CONFIG_backend_baseUrl  
+          value: "https://backstage.cdcr.ca.gov"
+        - name: NODE_ENV
+          value: production
+        livenessProbe:
+          httpGet:
+            path: /healthcheck
+            port: 7007
+          initialDelaySeconds: 60
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /healthcheck
+            port: 7007
+          initialDelaySeconds: 30
+          periodSeconds: 5
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        volumeMounts:
+        - name: catalog-volume
+          mountPath: /app/catalog
+        - name: templates-volume
+          mountPath: /app/templates
+      volumes:
+      - name: catalog-volume
+        configMap:
+          name: backstage-catalog
+      - name: templates-volume
+        configMap:
+          name: backstage-templates
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backstage
+  namespace: backstage
+spec:
+  selector:
+    app: backstage
+  ports:
+  - name: http
+    port: 80
+    targetPort: 7007
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: backstage
+  namespace: backstage
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  tls:
+  - hosts:
+    - backstage.cdcr.ca.gov
+    secretName: backstage-tls
+  rules:
+  - host: backstage.cdcr.ca.gov
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: backstage
+            port:
+              number: 80

@@ -1,6 +1,10 @@
 # macOS
 .DS_Store
 
+# Environment variables
+.env
+.env.local
+
 # Logs
 logs
 *.log
@@ -45,6 +49,8 @@ site
 
 # Sensitive credentials
 *-credentials.yaml
+*-secrets-actual.yaml
+kubernetes/backstage-secrets-actual.yaml
 
 # vscode database functionality support files
 *.session.sql
