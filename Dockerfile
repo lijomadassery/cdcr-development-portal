@@ -1,4 +1,4 @@
-FROM node:18-bullseye
+FROM node:20-bullseye
 
 # Install system dependencies
 RUN apt-get update && \
@@ -25,8 +25,8 @@ RUN yarn install --frozen-lockfile --network-timeout 600000
 # Copy source code
 COPY . .
 
-# Ensure Yarn state is correct after copying all files
-RUN yarn install --check-cache
+# Clean and reinstall to resolve any patch issues
+RUN yarn cache clean && yarn install --network-timeout 600000
 
 # Build the backend
 RUN yarn build:backend --config app-config.yaml --config app-config.production.yaml

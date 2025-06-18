@@ -62,14 +62,9 @@ This creates:
 
 ### 4. Set Up PostgreSQL Database
 
-**Option A: Deploy New PostgreSQL Instance (Recommended)**
 ```bash
 kubectl apply -f kubernetes/postgres.yaml
 ```
-
-**Option B: Use Managed Database (Production)**
-- AWS RDS, Google Cloud SQL, or Azure Database
-- Point POSTGRES_HOST to managed service endpoint
 
 ### 5. Configure Secrets
 
@@ -180,29 +175,29 @@ Once deployed, verify that Backstage can connect to all your clusters:
 
 ### 2. Configure GitHub Authentication for Production
 
-For production deployment, you'll want to:
-1. **Add all CDCR team members as User entities** in `/catalog/cdcr-teams.yaml`:
-   ```yaml
-   apiVersion: backstage.io/v1alpha1
-   kind: User
-   metadata:
-     name: their-github-username
-     annotations:
-       github.com/user-login: their-github-username
-   spec:
-     profile:
-       displayName: Their Full Name
-     memberOf: [platform-team]  # or appropriate team
+**GitHub OAuth is the primary authentication method for the CDCR Development Portal.**
+
+#### Production Setup Steps:
+
+1. **User Management**: CDCR team members are automatically granted access through GitHub OAuth once they are added to the GitHub organization. User entities in `/catalog/cdcr-teams.yaml` are created automatically through the sign-in resolvers - no manual user creation required for each team member.
+
+2. **Update GitHub OAuth app for production domain**:
+   - Go to GitHub Settings > Developer settings > OAuth Apps
+   - Update "Authorization callback URL": `https://backstage.cdcr.ca.gov/api/auth/github/handler/frame`
+   - Ensure "Homepage URL": `https://backstage.cdcr.ca.gov`
+
+3. **Update production secrets**:
+   ```bash
+   # Update Kubernetes secrets with production GitHub OAuth credentials
+   kubectl create secret generic backstage-secrets \
+     --from-literal=AUTH_GITHUB_CLIENT_ID=your-prod-client-id \
+     --from-literal=AUTH_GITHUB_CLIENT_SECRET=your-prod-client-secret
    ```
 
-2. **Update the GitHub OAuth app settings** to include the production domain:
-   - Go to GitHub Settings > Developer settings > OAuth Apps
-   - Update "Authorization callback URL" to include your production domain
-   - Example: `https://backstage.cdcr.ca.gov/api/auth/github/handler/frame`
-
-3. **Set the production environment variables** for GitHub client ID/secret:
-   - Update your Kubernetes secrets with production GitHub OAuth credentials
-   - Ensure `AUTH_GITHUB_CLIENT_ID` and `AUTH_GITHUB_CLIENT_SECRET` are set correctly
+#### Authentication Flow:
+- Users sign in with their GitHub accounts
+- Must be added to catalog as User entities to access the portal
+- Automatic team membership based on catalog configuration
 
 ### 3. Test GitHub Integration
 

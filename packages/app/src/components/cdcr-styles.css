@@ -1,0 +1,86 @@
+/* CDCR Custom Styling */
+
+/* Override primary colors throughout the app */
+:root {
+  --cdcr-primary: #1565c0;
+  --cdcr-primary-dark: #0d47a1;
+  --cdcr-primary-light: #42a5f5;
+}
+
+/* Primary buttons and links */
+.MuiButton-containedPrimary {
+  background-color: var(--cdcr-primary) !important;
+}
+
+.MuiButton-containedPrimary:hover {
+  background-color: var(--cdcr-primary-dark) !important;
+}
+
+/* Primary links */
+.MuiLink-root {
+  color: var(--cdcr-primary) !important;
+}
+
+/* Navigation sidebar */
+.MuiDrawer-paper {
+  background-color: var(--cdcr-primary) !important;
+}
+
+.MuiDrawer-paper .MuiListItem-root {
+  color: white !important;
+}
+
+.MuiDrawer-paper .MuiListItemIcon-root {
+  color: white !important;
+}
+
+/* Header */
+.MuiAppBar-root {
+  background-color: var(--cdcr-primary) !important;
+}
+
+/* Floating Action Button */
+.MuiFab-primary {
+  background-color: var(--cdcr-primary) !important;
+}
+
+.MuiFab-primary:hover {
+  background-color: var(--cdcr-primary-dark) !important;
+}
+
+/* Progress indicators */
+.MuiLinearProgress-barColorPrimary {
+  background-color: var(--cdcr-primary) !important;
+}
+
+.MuiCircularProgress-colorPrimary {
+  color: var(--cdcr-primary) !important;
+}
+
+/* Tabs */
+.MuiTab-textColorPrimary.Mui-selected {
+  color: var(--cdcr-primary) !important;
+}
+
+.MuiTabs-indicator {
+  background-color: var(--cdcr-primary) !important;
+}
+
+/* Switch */
+.MuiSwitch-colorPrimary.Mui-checked {
+  color: var(--cdcr-primary) !important;
+}
+
+.MuiSwitch-colorPrimary.Mui-checked + .MuiSwitch-track {
+  background-color: var(--cdcr-primary) !important;
+}
+
+/* Checkbox */
+.MuiCheckbox-colorPrimary.Mui-checked {
+  color: var(--cdcr-primary) !important;
+}
+
+/* Radio */
+.MuiRadio-colorPrimary.Mui-checked {
+  color: var(--cdcr-primary) !important;
+}

@@ -35,12 +35,30 @@ import { AppRouter, FlatRoutes } from '@backstage/core-app-api';
 import { CatalogGraphPage } from '@backstage/plugin-catalog-graph';
 import { RequirePermission } from '@backstage/plugin-permission-react';
 import { catalogEntityCreatePermission } from '@backstage/plugin-catalog-common/alpha';
-import { ModernSignInPage } from './components/auth/ModernSignInPage';
-import { StyledSignInPage } from './components/auth/StyledSignInPage';
 import { githubAuthApiRef } from '@backstage/core-plugin-api';
+import './components/cdcr-styles.css';
+import { cdcrLightTheme, cdcrDarkTheme, UnifiedThemeProvider } from './themes/simpleCdcrTheme';
 
 const app = createApp({
   apis,
+  themes: [
+    {
+      id: 'cdcr-light',
+      title: 'CDCR Light',
+      variant: 'light',
+      Provider: ({ children }) => (
+        <UnifiedThemeProvider theme={cdcrLightTheme} children={children} />
+      ),
+    },
+    {
+      id: 'cdcr-dark',
+      title: 'CDCR Dark',
+      variant: 'dark',
+      Provider: ({ children }) => (
+        <UnifiedThemeProvider theme={cdcrDarkTheme} children={children} />
+      ),
+    },
+  ],
   bindRoutes({ bind }) {
     bind(catalogPlugin.externalRoutes, {
       createComponent: scaffolderPlugin.routes.root,
@@ -59,7 +77,20 @@ const app = createApp({
     });
   },
   components: {
-    SignInPage: StyledSignInPage,
+    SignInPage: props => (
+      <SignInPage
+        {...props}
+        auto
+        providers={[
+          {
+            id: 'github-auth-provider',
+            title: 'GitHub',
+            message: 'Sign in using GitHub',
+            apiRef: githubAuthApiRef,
+          },
+        ]}
+      />
+    ),
   },
 });
 
