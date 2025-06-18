@@ -22,29 +22,29 @@ This guide covers deploying the CDCR Development Portal to your Kubernetes clust
 
 ### 1. Choose Target Cluster
 
-**Recommended:** Start with your `sandbox` or `dev` cluster for testing.
+**Recommended:** Start with your `dev` cluster for initial testing.
 
 ```bash
-# Set kubectl context to target cluster
-kubectl config use-context your-sandbox-cluster
+# Set kubectl context to dev cluster  
+kubectl config use-context your-dev-cluster
 ```
 
-### 2. Build and Push Docker Image
+### 2. Use Pre-Built Docker Image
 
-```bash
-# Build the production image
-docker build -t backstage:latest .
-
-# Tag for your registry
-docker tag backstage:latest your-registry.com/cdcr/backstage:latest
-
-# Push to registry
-docker push your-registry.com/cdcr/backstage:latest
+The Docker image is automatically built via GitHub Actions and available at:
+```
+ghcr.io/lijomadassery/backstage:latest
 ```
 
 Update the image reference in `kubernetes/backstage-deployment.yaml`:
 ```yaml
-image: your-registry.com/cdcr/backstage:latest
+image: ghcr.io/lijomadassery/backstage:latest
+```
+
+**Alternative:** Build manually if needed:
+```bash
+docker build -t ghcr.io/lijomadassery/backstage:latest .
+docker push ghcr.io/lijomadassery/backstage:latest
 ```
 
 ### 3. Create Kubernetes Namespace and RBAC
