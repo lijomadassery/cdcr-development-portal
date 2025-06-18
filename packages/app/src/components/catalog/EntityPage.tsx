@@ -63,6 +63,7 @@ import {
   isGithubActionsAvailable,
 } from '@backstage-community/plugin-github-actions';
 
+
 import {
   EntityFluxGitRepositoriesCard,
   EntityFluxSourcesCard,
@@ -147,6 +148,7 @@ const overviewContent = (
     <Grid item md={8} xs={12}>
       <EntityHasSubcomponentsCard variant="gridItem" />
     </Grid>
+
   </Grid>
 );
 
@@ -210,6 +212,7 @@ const serviceEntityPage = (
     <EntityLayout.Route path="/docs" title="Docs">
       {techdocsContent}
     </EntityLayout.Route>
+
   </EntityLayout>
 );
 

@@ -8,6 +8,9 @@ metadata:
     github.com/project-slug: CDCR-OMS-COAST/coast-ui
     backstage.io/source-location: url:https://github.com/CDCR-OMS-COAST/coast-ui
     backstage.io/techdocs-ref: dir:.
+    backstage.io/kubernetes-id: coast-ui
+    backstage.io/kubernetes-namespace: coast
+    backstage.io/kubernetes-label-selector: 'app=coast-ui'
   tags:
     - pwa
     - frontend

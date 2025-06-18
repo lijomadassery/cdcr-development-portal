@@ -210,13 +210,64 @@ For production deployment, you'll want to:
 - Verify GitHub Actions appear in the CI/CD tab
 - Test GitHub OAuth login with team member accounts
 
-### 3. Configure Monitoring
+### 4. Install Additional Plugins for Enhanced Visibility
+
+The CDCR Development Portal includes additional plugins for operational excellence:
+
+#### Enhanced Operational Visibility
+The CDCR Development Portal provides comprehensive operational visibility through integrated plugins:
+
+**Core Plugins Included**:
+- **GitHub Actions Integration**: View CI/CD workflows and build status
+- **Flux GitOps Integration**: Monitor deployment pipelines and Git repositories  
+- **Kubernetes Integration**: Multi-cluster resource monitoring and management
+- **Service Catalog**: Centralized application and dependency tracking
+
+**Advanced Plugin Ecosystem**:
+For additional capabilities, the platform supports third-party plugins for:
+- **CI/CD Statistics**: Build metrics and DORA performance tracking
+- **Security Scanning**: Vulnerability management and SBOM generation
+- **Log Aggregation**: Kubernetes log viewing and analysis
+- **Topology Visualization**: Service dependency mapping
+
+**Benefits for CDCR**:
+- Unified view of applications across 6 Kubernetes clusters
+- GitOps workflow visibility for secure deployments  
+- GitHub OAuth integration for seamless authentication
+- Extensible architecture for future operational needs
+
+### 5. Configure Monitoring
 
 Set up monitoring for:
 - Pod health and resource usage
 - Database performance
 - Application logs
 - External dependencies (GitHub, clusters)
+
+### 6. Verify Plugin Functionality
+
+After deployment, verify that all plugins are working correctly:
+
+#### Kubernetes Integration
+- Navigate to any component with Kubernetes annotations
+- Check the "Kubernetes" tab shows resources from all 6 clusters
+- Verify you can see pods, services, and deployments
+
+#### GitOps (Flux) Integration  
+- Visit the "GitOps" tab on service entities
+- Verify Flux Git repositories are displayed
+- Check Helm releases show deployment status
+
+#### GitHub Actions Integration
+- Open the "CI/CD" tab on service entities  
+- Verify GitHub Actions workflows are displayed
+- Check build status and pipeline execution history
+- Test workflow triggering and status updates
+
+#### GitHub Integration
+- Test GitHub OAuth login with team member accounts
+- Verify GitHub Actions appear in the CI/CD tab
+- Try creating a new service using the scaffolder template
 
 ## Troubleshooting
 
@@ -243,11 +294,30 @@ Set up monitoring for:
    - Check DNS resolution
    - Confirm ingress controller is working
 
+5. **Plugin Issues**
+   
+   **GitHub Actions Plugin Not Working**:
+   - Verify entities have proper `github.com/project-slug` annotations
+   - Check that GitHub Actions workflows are accessible and enabled
+   - Test GitHub token permissions for repository access
+   - Confirm GitHub integration is properly configured
+   
+   **Flux Plugin Not Showing Data**:
+   - Verify Flux is properly installed on clusters
+   - Check that entities have Flux annotations: `flux.weave.works/git-repository`
+   - Confirm Kubernetes plugin can access Flux CRDs
+
 ### Health Checks
 
 Backstage provides health check endpoints:
 - `https://backstage.cdcr.ca.gov/healthcheck` - Overall health
 - Check pod logs for startup issues
+
+**Plugin-Specific Health Checks**:
+- GitHub Actions: Verify GitHub API connectivity and workflow access
+- Flux: Confirm Flux controllers are healthy across clusters  
+- GitHub OAuth: Test authentication and API connectivity
+- Kubernetes: Ensure cluster connectivity and resource access
 
 ## Security Considerations
 
