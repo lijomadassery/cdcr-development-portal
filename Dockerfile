@@ -8,8 +8,7 @@ RUN apt-get update && \
 
 # Enable Corepack and set up Yarn 4.4.1
 RUN corepack enable && \
-    corepack prepare yarn@4.4.1 --activate && \
-    yarn config set python /usr/bin/python3
+    corepack prepare yarn@4.4.1 --activate
 
 # Set working directory
 WORKDIR /app
