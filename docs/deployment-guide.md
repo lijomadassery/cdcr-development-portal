@@ -60,11 +60,14 @@ This creates:
 
 ### 4. Set Up PostgreSQL Database
 
+**Option A: Deploy New PostgreSQL Instance (Recommended)**
 ```bash
 kubectl apply -f kubernetes/postgres.yaml
 ```
 
-**For Production:** Consider using a managed database service instead of the included PostgreSQL deployment.
+**Option B: Use Managed Database (Production)**
+- AWS RDS, Google Cloud SQL, or Azure Database
+- Point POSTGRES_HOST to managed service endpoint
 
 ### 5. Configure Secrets
 
