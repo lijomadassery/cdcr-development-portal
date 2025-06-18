@@ -65,6 +65,8 @@ This guide walks through setting up GitHub OAuth authentication for the CDCR Dev
    GITHUB_TOKEN=your_actual_token_here
    ```
 
+**Note:** The application is pre-configured for both guest and GitHub authentication. GitHub auth will be available automatically once the environment variables are properly set.
+
 ## Step 4: Test Authentication
 
 1. **Start the Development Server**
