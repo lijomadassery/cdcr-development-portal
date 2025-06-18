@@ -4,8 +4,12 @@ FROM node:18-bullseye
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     python3 g++ build-essential libsqlite3-dev curl git && \
-    yarn config set python /usr/bin/python3 && \
     rm -rf /var/lib/apt/lists/*
+
+# Enable Corepack and set up Yarn 4.4.1
+RUN corepack enable && \
+    corepack prepare yarn@4.4.1 --activate && \
+    yarn config set python /usr/bin/python3
 
 # Set working directory
 WORKDIR /app
