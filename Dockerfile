@@ -20,7 +20,7 @@ COPY packages/app/package.json ./packages/app/
 COPY packages/backend/package.json ./packages/backend/
 
 # Install dependencies
-RUN yarn install --frozen-lockfile --network-timeout 600000
+RUN yarn install --immutable --network-timeout 600000
 
 # Copy source code
 COPY . .
