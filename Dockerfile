@@ -13,8 +13,9 @@ RUN corepack enable && \
 # Set working directory
 WORKDIR /app
 
-# Copy package files
-COPY package.json yarn.lock ./
+# Copy Yarn configuration and package files
+COPY package.json yarn.lock .yarnrc.yml ./
+COPY .yarn .yarn
 COPY packages/app/package.json ./packages/app/
 COPY packages/backend/package.json ./packages/backend/
 
@@ -23,6 +24,9 @@ RUN yarn install --frozen-lockfile --network-timeout 600000
 
 # Copy source code
 COPY . .
+
+# Ensure Yarn state is correct after copying all files
+RUN yarn install --check-cache
 
 # Build the backend
 RUN yarn build:backend --config app-config.yaml --config app-config.production.yaml
