@@ -29,7 +29,9 @@ COPY . .
 RUN yarn cache clean && yarn install --network-timeout 600000
 
 # Build the backend
-RUN yarn workspace backend build
+WORKDIR /app/packages/backend
+RUN yarn build
+WORKDIR /app
 
 # Expose port
 EXPOSE 7007
