@@ -65,7 +65,27 @@ This guide walks through setting up GitHub OAuth authentication for the CDCR Dev
    GITHUB_TOKEN=your_actual_token_here
    ```
 
-**Note:** The application is pre-configured for both guest and GitHub authentication. GitHub auth will be available automatically once the environment variables are properly set.
+4. **Enable GitHub Auth in Configuration**
+   
+   After setting up your credentials, uncomment the GitHub auth section in `app-config.yaml`:
+   ```yaml
+   auth:
+     providers:
+       guest: {}
+       github:  # Uncomment this entire section
+         development:
+           clientId: ${AUTH_GITHUB_CLIENT_ID}
+           clientSecret: ${AUTH_GITHUB_CLIENT_SECRET}
+   ```
+
+5. **Update SignInPage Configuration**
+   
+   Edit `packages/app/src/App.tsx` to include GitHub provider:
+   ```typescript
+   components: {
+     SignInPage: props => <SignInPage {...props} providers={['guest', 'github']} />,
+   },
+   ```
 
 ## Step 4: Test Authentication
 

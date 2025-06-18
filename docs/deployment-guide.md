@@ -178,11 +178,37 @@ Once deployed, verify that Backstage can connect to all your clusters:
 - Check the "Kubernetes" tab
 - Verify you can see resources from all 6 clusters
 
-### 2. Test GitHub Integration
+### 2. Configure GitHub Authentication for Production
+
+For production deployment, you'll want to:
+1. **Add all CDCR team members as User entities** in `/catalog/cdcr-teams.yaml`:
+   ```yaml
+   apiVersion: backstage.io/v1alpha1
+   kind: User
+   metadata:
+     name: their-github-username
+     annotations:
+       github.com/user-login: their-github-username
+   spec:
+     profile:
+       displayName: Their Full Name
+     memberOf: [platform-team]  # or appropriate team
+   ```
+
+2. **Update the GitHub OAuth app settings** to include the production domain:
+   - Go to GitHub Settings > Developer settings > OAuth Apps
+   - Update "Authorization callback URL" to include your production domain
+   - Example: `https://backstage.cdcr.ca.gov/api/auth/github/handler/frame`
+
+3. **Set the production environment variables** for GitHub client ID/secret:
+   - Update your Kubernetes secrets with production GitHub OAuth credentials
+   - Ensure `AUTH_GITHUB_CLIENT_ID` and `AUTH_GITHUB_CLIENT_SECRET` are set correctly
+
+### 3. Test GitHub Integration
 
 - Try creating a new service using the template
 - Verify GitHub Actions appear in the CI/CD tab
-- Test GitHub OAuth login
+- Test GitHub OAuth login with team member accounts
 
 ### 3. Configure Monitoring
 

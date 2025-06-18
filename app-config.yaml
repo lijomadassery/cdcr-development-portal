@@ -66,11 +66,19 @@ auth:
   # see https://backstage.io/docs/auth/ to learn about auth providers
   providers:
     # See https://backstage.io/docs/auth/guest/provider
-    guest: {}
+    guest:
+      dangerouslyAllowOutsideDevelopment: true
     github:
       development:
         clientId: ${AUTH_GITHUB_CLIENT_ID}
         clientSecret: ${AUTH_GITHUB_CLIENT_SECRET}
+        signIn:
+          resolvers:
+            # Primary resolver - matches GitHub username to Backstage user entity
+            - resolver: usernameMatchingUserEntityName
+            # Fallback resolvers for email-based matching
+            - resolver: emailMatchingUserEntityProfileEmail
+            - resolver: emailLocalPartMatchingUserEntityName
         ## uncomment if using GitHub Enterprise
         # enterpriseInstanceUrl: ${AUTH_GITHUB_ENTERPRISE_INSTANCE_URL}
 

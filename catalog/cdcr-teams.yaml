@@ -40,3 +40,14 @@ metadata:
   name: guest
 spec:
   memberOf: [platform-team]
+---
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: lijomadassery
+  annotations:
+    github.com/user-login: lijomadassery
+spec:
+  profile:
+    displayName: Lijo Madassery
+  memberOf: [platform-team]
