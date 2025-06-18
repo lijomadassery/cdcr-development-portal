@@ -29,16 +29,18 @@ This guide covers deploying the CDCR Development Portal to your Kubernetes clust
 kubectl config use-context your-dev-cluster
 ```
 
-### 2. Use Pre-Built Docker Image
+### 2. Verify Docker Image
 
-The Docker image is automatically built via GitHub Actions and available at:
+The Docker image is automatically built via GitHub Actions. Before deploying, verify the image is available:
+
+```bash
+# Check if image exists and is recent
+docker pull ghcr.io/lijomadassery/backstage:latest
+```
+
+The deployment manifest (`kubernetes/backstage-deployment.yaml`) is already configured to use:
 ```
 ghcr.io/lijomadassery/backstage:latest
-```
-
-Update the image reference in `kubernetes/backstage-deployment.yaml`:
-```yaml
-image: ghcr.io/lijomadassery/backstage:latest
 ```
 
 **Alternative:** Build manually if needed:
@@ -114,11 +116,27 @@ kubectl get secret $(kubectl get sa backstage-viewer -n default -o jsonpath='{.s
 
 Add these values to your secrets configuration.
 
-### 7. Update Domain Configuration
+### 7. Update Domain Configuration (If Needed)
 
-Edit the following files with your actual domain:
-- `app-config.production.yaml` - Update `baseUrl` values
-- `kubernetes/backstage-deployment.yaml` - Update ingress host
+The deployment is pre-configured for `backstage.cdcr.ca.gov`. If you need a different domain:
+
+1. **Update production config** in `app-config.production.yaml`:
+   ```yaml
+   app:
+     baseUrl: https://your-domain.com
+   backend:
+     baseUrl: https://your-domain.com
+   ```
+
+2. **Update ingress** in `kubernetes/backstage-deployment.yaml`:
+   ```yaml
+   spec:
+     tls:
+     - hosts:
+       - your-domain.com
+     rules:
+     - host: your-domain.com
+   ```
 
 ### 8. Deploy Backstage
 
