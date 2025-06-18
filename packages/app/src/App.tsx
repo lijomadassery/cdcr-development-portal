@@ -56,7 +56,7 @@ const app = createApp({
     });
   },
   components: {
-    SignInPage: props => <SignInPage {...props} providers={['guest']} />,
+    SignInPage: props => <SignInPage {...props} providers={['guest', 'github']} />,
   },
 });
 
