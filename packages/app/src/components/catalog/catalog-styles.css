@@ -1,0 +1,85 @@
+/* Target the main catalog page container */
+[data-testid="catalog-page"] {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Target the catalog filter layout */
+[data-testid="catalog-page"] .MuiGrid-container {
+  flex-direction: column !important;
+}
+
+/* Move the filters section to the top */
+[data-testid="catalog-page"] .MuiGrid-item:first-child {
+  order: -1 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  flex-basis: 100% !important;
+}
+
+/* Style the filters container */
+[data-testid="catalog-page"] .MuiGrid-item:first-child .MuiPaper-root {
+  margin-bottom: 16px;
+  padding: 16px;
+}
+
+/* Make filters display horizontally */
+[data-testid="catalog-page"] .MuiGrid-item:first-child .MuiFormControl-root {
+  display: inline-block;
+  margin-right: 16px;
+  margin-bottom: 8px;
+  min-width: 200px;
+}
+
+/* Adjust the main content area */
+[data-testid="catalog-page"] .MuiGrid-item:not(:first-child) {
+  width: 100% !important;
+  max-width: 100% !important;
+  flex-basis: 100% !important;
+}
+
+/* Alternative approach - target by class names */
+.catalog-page,
+.catalog-index-page {
+  display: flex;
+  flex-direction: column;
+}
+
+.catalog-page .MuiGrid-container,
+.catalog-index-page .MuiGrid-container {
+  flex-direction: column !important;
+}
+
+.catalog-page .MuiGrid-item:first-child,
+.catalog-index-page .MuiGrid-item:first-child {
+  order: -1 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  flex-basis: 100% !important;
+}
+
+/* Target the catalog table container */
+.catalog-page .MuiGrid-item:not(:first-child),
+.catalog-index-page .MuiGrid-item:not(:first-child) {
+  width: 100% !important;
+  max-width: 100% !important;
+  flex-basis: 100% !important;
+}
+
+/* Force the layout to be vertical */
+.MuiGrid-container[data-testid="catalog-page"] {
+  flex-direction: column !important;
+}
+
+/* Move first grid item to top */
+.MuiGrid-container[data-testid="catalog-page"] > .MuiGrid-item:first-child {
+  order: -1 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  flex-basis: 100% !important;
+}
+
+/* Ensure the table takes full width */
+.catalog-page .MuiGrid-item:not(:first-child) .MuiPaper-root {
+  width: 100%;
+} 

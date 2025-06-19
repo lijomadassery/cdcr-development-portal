@@ -1,9 +1,7 @@
 import { PropsWithChildren } from 'react';
 import { makeStyles } from '@material-ui/core';
 import HomeIcon from '@material-ui/icons/Home';
-import ExtensionIcon from '@material-ui/icons/Extension';
-import LibraryBooks from '@material-ui/icons/LibraryBooks';
-import CreateComponentIcon from '@material-ui/icons/AddCircleOutline';
+import AddBoxIcon from '@material-ui/icons/AddBox';
 import LogoFull from './LogoFull';
 import LogoIcon from './LogoIcon';
 import {
@@ -36,10 +34,22 @@ const useSidebarLogoStyles = makeStyles({
     flexFlow: 'row nowrap',
     alignItems: 'center',
     marginBottom: -14,
+    borderBottom: '1px solid #e0e0e0',
+    paddingBottom: '8px',
   },
   link: {
     width: sidebarConfig.drawerWidthClosed,
     marginLeft: 24,
+  },
+});
+
+const useCustomDividerStyles = makeStyles({
+  customDivider: {
+    height: '3px',
+    backgroundColor: '#d1d5db',
+    border: 'none',
+    margin: '12px 0',
+    width: '100%',
   },
 });
 
@@ -56,10 +66,16 @@ const SidebarLogo = () => {
   );
 };
 
+const CustomDivider = () => {
+  const classes = useCustomDividerStyles();
+  return <hr className={classes.customDivider} />;
+};
+
 export const Root = ({ children }: PropsWithChildren<{}>) => (
   <SidebarPage>
     <Sidebar>
       <SidebarLogo />
+      <CustomDivider />
       <SidebarGroup label="Search" icon={<SearchIcon />} to="/search">
         <SidebarSearchModal />
       </SidebarGroup>
@@ -72,9 +88,7 @@ export const Root = ({ children }: PropsWithChildren<{}>) => (
           pluralTitle="My Groups"
           icon={GroupIcon}
         />
-        <SidebarItem icon={ExtensionIcon} to="api-docs" text="APIs" />
-        <SidebarItem icon={LibraryBooks} to="docs" text="Docs" />
-        <SidebarItem icon={CreateComponentIcon} to="create" text="Create..." />
+        <SidebarItem icon={AddBoxIcon} to="catalog-import" text="Register Component" />
         {/* End global nav */}
         <SidebarDivider />
         <SidebarScrollWrapper>

@@ -1,34 +1,41 @@
+import React from 'react';
 import { Navigate, Route } from 'react-router-dom';
-import { apiDocsPlugin, ApiExplorerPage } from '@backstage/plugin-api-docs';
 import {
   CatalogEntityPage,
   CatalogIndexPage,
   catalogPlugin,
+  CatalogTable,
+  CatalogTableColumnsFunc,
 } from '@backstage/plugin-catalog';
+import {
+  EntityKindPicker,
+  EntityTypePicker,
+  EntityOwnerPicker,
+  EntityTagPicker,
+  UserListPicker,
+  EntityListProvider,
+} from '@backstage/plugin-catalog-react';
 import {
   CatalogImportPage,
   catalogImportPlugin,
 } from '@backstage/plugin-catalog-import';
-import { ScaffolderPage, scaffolderPlugin } from '@backstage/plugin-scaffolder';
 import { orgPlugin } from '@backstage/plugin-org';
 import { SearchPage } from '@backstage/plugin-search';
-import {
-  TechDocsIndexPage,
-  techdocsPlugin,
-  TechDocsReaderPage,
-} from '@backstage/plugin-techdocs';
-import { TechDocsAddons } from '@backstage/plugin-techdocs-react';
-import { ReportIssue } from '@backstage/plugin-techdocs-module-addons-contrib';
 import { UserSettingsPage } from '@backstage/plugin-user-settings';
 import { apis } from './apis';
 import { entityPage } from './components/catalog/EntityPage';
 import { searchPage } from './components/search/SearchPage';
 import { Root } from './components/Root';
+import { CatalogPage } from './components/catalog/CatalogPage';
 
 import {
   AlertDisplay,
   OAuthRequestDialog,
   SignInPage,
+  Content,
+  ContentHeader,
+  PageWithHeader,
+  SupportButton,
 } from '@backstage/core-components';
 import { createApp } from '@backstage/app-defaults';
 import { AppRouter, FlatRoutes } from '@backstage/core-app-api';
@@ -36,8 +43,20 @@ import { CatalogGraphPage } from '@backstage/plugin-catalog-graph';
 import { RequirePermission } from '@backstage/plugin-permission-react';
 import { catalogEntityCreatePermission } from '@backstage/plugin-catalog-common/alpha';
 import { githubAuthApiRef } from '@backstage/core-plugin-api';
-import './components/cdcr-styles.css';
 import { cdcrLightTheme, cdcrDarkTheme, UnifiedThemeProvider } from './themes/simpleCdcrTheme';
+
+// Custom columns function to remove the TAGS column from the catalog table
+const customCatalogColumns: CatalogTableColumnsFunc = entityListContext => {
+  return [
+    CatalogTable.columns.createNameColumn({ defaultKind: 'Component' }),
+    CatalogTable.columns.createSystemColumn(),
+    CatalogTable.columns.createOwnerColumn(),
+    CatalogTable.columns.createSpecTypeColumn(),
+    CatalogTable.columns.createSpecLifecycleColumn(),
+  ];
+};
+
+
 
 const app = createApp({
   apis,
@@ -60,18 +79,6 @@ const app = createApp({
     },
   ],
   bindRoutes({ bind }) {
-    bind(catalogPlugin.externalRoutes, {
-      createComponent: scaffolderPlugin.routes.root,
-      viewTechDoc: techdocsPlugin.routes.docRoot,
-      createFromTemplate: scaffolderPlugin.routes.selectedTemplate,
-    });
-    bind(apiDocsPlugin.externalRoutes, {
-      registerApi: catalogImportPlugin.routes.importPage,
-    });
-    bind(scaffolderPlugin.externalRoutes, {
-      registerComponent: catalogImportPlugin.routes.importPage,
-      viewTechDoc: techdocsPlugin.routes.docRoot,
-    });
     bind(orgPlugin.externalRoutes, {
       catalogIndex: catalogPlugin.routes.catalogIndex,
     });
@@ -97,24 +104,13 @@ const app = createApp({
 const routes = (
   <FlatRoutes>
     <Route path="/" element={<Navigate to="catalog" />} />
-    <Route path="/catalog" element={<CatalogIndexPage />} />
+    <Route path="/catalog" element={<CatalogIndexPage columns={customCatalogColumns} />} />
     <Route
       path="/catalog/:namespace/:kind/:name"
       element={<CatalogEntityPage />}
     >
       {entityPage}
     </Route>
-    <Route path="/docs" element={<TechDocsIndexPage />} />
-    <Route
-      path="/docs/:namespace/:kind/:name/*"
-      element={<TechDocsReaderPage />}
-    >
-      <TechDocsAddons>
-        <ReportIssue />
-      </TechDocsAddons>
-    </Route>
-    <Route path="/create" element={<ScaffolderPage />} />
-    <Route path="/api-docs" element={<ApiExplorerPage />} />
     <Route
       path="/catalog-import"
       element={
@@ -131,8 +127,47 @@ const routes = (
   </FlatRoutes>
 );
 
+// Component to hide unwanted filters - much more conservative
+const FilterHider = () => {
+  React.useEffect(() => {
+    const hideFilters = () => {
+      // Only target elements in the sidebar filter area
+      const sidebarFilters = document.querySelector('.MuiGrid-container .MuiGrid-item:first-child');
+      if (!sidebarFilters) return;
+
+      // Look for specific filter labels only in the filter sidebar
+      const filterLabels = sidebarFilters.querySelectorAll('label, .MuiTypography-root, .MuiInputLabel-root');
+      
+      filterLabels.forEach(label => {
+        const text = label.textContent?.trim() || '';
+        if (text === 'Lifecycle' || text === 'Processing Status' || 
+            text === 'Namespace' || text === 'Tags' || 
+            text === 'PERSONAL') {
+          
+          // Only hide the immediate parent form control or section
+          const parent = label.closest('.MuiFormControl-root') || 
+                        label.closest('div[class*="section"]') ||
+                        label.parentElement;
+          
+          if (parent && parent !== sidebarFilters) {
+            parent.style.display = 'none';
+          }
+        }
+      });
+
+      console.log('Conservative filter hiding attempted');
+    };
+
+    // Run just once after page load
+    setTimeout(hideFilters, 2000);
+  }, []);
+
+  return null;
+};
+
 export default app.createRoot(
   <>
+    <FilterHider />
     <AlertDisplay />
     <OAuthRequestDialog />
     <AppRouter>
