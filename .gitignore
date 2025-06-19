@@ -60,3 +60,9 @@ e2e-test-report/
 
 # Cache
 .cache/
+
+# Deployment secrets - DO NOT COMMIT
+deployment-secrets.env
+deployment-secrets.json
+deployment-secrets.zip
+*.env
