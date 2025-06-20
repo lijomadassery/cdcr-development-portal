@@ -31,6 +31,9 @@ RUN yarn cache clean && yarn install --network-timeout 600000
 # Build the backend
 WORKDIR /app/packages/backend
 RUN yarn build
+
+# Extract the built backend bundle
+RUN tar -xzf dist/bundle.tar.gz -C /app --strip-components=0
 WORKDIR /app
 
 # Expose port
