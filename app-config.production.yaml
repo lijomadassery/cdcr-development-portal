@@ -7,6 +7,10 @@ backend:
   listen:
     port: 7007
     host: 0.0.0.0
+  cors:
+    origin: https://backstage.mt-dev.cdcr.ca.gov
+    methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
+    credentials: true
   
   database:
     client: pg
