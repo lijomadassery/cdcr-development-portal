@@ -7,6 +7,10 @@ backend:
   listen:
     port: 7007
     host: 0.0.0.0
+  csp:
+    connect-src: ["'self'", 'http:', 'https:']
+    img-src: ["'self'", 'data:', 'https:']
+    script-src: ["'self'", "'unsafe-inline'", "'unsafe-eval'"]
   cors:
     origin: https://backstage.mt-dev.cdcr.ca.gov
     methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
