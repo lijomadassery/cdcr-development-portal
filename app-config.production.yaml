@@ -1,9 +1,9 @@
 app:
   title: CDCR Development Portal
-  baseUrl: https://backstage.cdcr.ca.gov
+  baseUrl: https://backstage.mt-dev.cdcr.ca.gov
 
 backend:
-  baseUrl: https://backstage.cdcr.ca.gov
+  baseUrl: https://backstage.mt-dev.cdcr.ca.gov
   listen:
     port: 7007
     host: 0.0.0.0
