@@ -27,6 +27,8 @@ backend:
 
 auth:
   providers:
+    guest:
+      dangerouslyAllowOutsideDevelopment: true
     github:
       development:
         clientId: ${AUTH_GITHUB_CLIENT_ID}
