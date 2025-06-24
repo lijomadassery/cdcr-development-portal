@@ -44,10 +44,49 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: User
 metadata:
-  name: lijomadassery
-  annotations:
-    github.com/user-login: lijomadassery
+  name: kevin-baroni
+spec:
+  profile:
+    displayName: Kevin Baroni
+    email: kevin.baroni@cdcr.ca.gov
+  memberOf: [platform-team]
+---
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: lijo-madassery
 spec:
   profile:
     displayName: Lijo Madassery
+    email: lijo.madassery@cdcr.ca.gov
+  memberOf: [platform-team]
+---
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: michael-kildare
+spec:
+  profile:
+    displayName: Michael Kildare
+    email: michael.kildare@cdcr.ca.gov
+  memberOf: [platform-team]
+---
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: chris-parker
+spec:
+  profile:
+    displayName: Chris Parker
+    email: chris.parker@cdcr.ca.gov
+  memberOf: [platform-team]
+---
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: jeff-stutzman
+spec:
+  profile:
+    displayName: Jeff Stutzman
+    email: jeff.stutzman@cdcr.ca.gov
   memberOf: [platform-team]
