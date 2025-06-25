@@ -59,6 +59,9 @@ spec:
   profile:
     displayName: Lijo Madassery
     email: lijo.madassery@gmail.com
+    emails:
+      - lijo.madassery@gmail.com
+      - lijo.madassery@cdcr.ca.gov
   memberOf: [platform-team]
 ---
 apiVersion: backstage.io/v1alpha1
