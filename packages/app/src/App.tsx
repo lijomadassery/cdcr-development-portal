@@ -95,6 +95,12 @@ const app = createApp({
             message: 'Sign in using GitHub',
             apiRef: githubAuthApiRef,
           },
+          {
+            id: 'guest-auth-provider',
+            title: 'Guest',
+            message: 'Sign in as Guest',
+            apiRef: undefined as any,
+          },
         ]}
       />
     ),
