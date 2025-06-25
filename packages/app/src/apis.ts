@@ -26,7 +26,7 @@ export const apis: AnyApiFactory[] = [
       configApi,
       discoveryApi,
       oauthRequestApi,
-      defaultScopes: ["read:user"],
+      defaultScopes: ["read:user", "user:email"],
     })
   }),
 
