@@ -42,7 +42,7 @@ import { AppRouter, FlatRoutes } from '@backstage/core-app-api';
 import { CatalogGraphPage } from '@backstage/plugin-catalog-graph';
 import { RequirePermission } from '@backstage/plugin-permission-react';
 import { catalogEntityCreatePermission } from '@backstage/plugin-catalog-common/alpha';
-import { githubAuthApiRef } from '@backstage/core-plugin-api';
+import { githubAuthApiRef, guestAuthApiRef } from '@backstage/core-plugin-api';
 import { cdcrLightTheme, cdcrDarkTheme, UnifiedThemeProvider } from './themes/simpleCdcrTheme';
 
 // Custom columns function to remove the TAGS column from the catalog table
@@ -99,7 +99,7 @@ const app = createApp({
             id: 'guest-auth-provider',
             title: 'Guest',
             message: 'Sign in as Guest',
-            apiRef: undefined as any,
+            apiRef: guestAuthApiRef,
           },
         ]}
       />

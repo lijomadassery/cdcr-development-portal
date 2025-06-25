@@ -8,10 +8,11 @@ import {
   configApiRef,
   createApiFactory,
   githubAuthApiRef,
+  guestAuthApiRef,
   discoveryApiRef,
   oauthRequestApiRef,
 } from '@backstage/core-plugin-api';
-import { GithubAuth } from '@backstage/core-app-api';
+import { GithubAuth, GuestAuth } from '@backstage/core-app-api';
 
 export const apis: AnyApiFactory[] = [
   // GitHub Auth API - Required for GitHub authentication
@@ -27,6 +28,19 @@ export const apis: AnyApiFactory[] = [
       discoveryApi,
       oauthRequestApi,
       defaultScopes: ["read:user"],
+    })
+  }),
+
+  // Guest Auth API - Required for guest authentication
+  createApiFactory({
+    api: guestAuthApiRef,
+    deps: {
+      configApi: configApiRef,
+      discoveryApi: discoveryApiRef,
+    },
+    factory: ({ configApi, discoveryApi }) => GuestAuth.create({
+      configApi,
+      discoveryApi,
     })
   }),
 
