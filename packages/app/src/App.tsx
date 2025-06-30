@@ -62,19 +62,19 @@ const app = createApp({
   apis,
   themes: [
     {
-      id: 'cdcr-light',
-      title: 'CDCR Light',
-      variant: 'light',
-      Provider: ({ children }) => (
-        <UnifiedThemeProvider theme={cdcrLightTheme} children={children} />
-      ),
-    },
-    {
       id: 'cdcr-dark',
       title: 'CDCR Dark',
       variant: 'dark',
       Provider: ({ children }) => (
         <UnifiedThemeProvider theme={cdcrDarkTheme} children={children} />
+      ),
+    },
+    {
+      id: 'cdcr-light',
+      title: 'CDCR Light',
+      variant: 'light',
+      Provider: ({ children }) => (
+        <UnifiedThemeProvider theme={cdcrLightTheme} children={children} />
       ),
     },
   ],
