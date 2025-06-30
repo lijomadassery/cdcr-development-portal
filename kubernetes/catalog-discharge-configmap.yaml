@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backstage-catalog-discharge
+  namespace: backstage-local
+data:
+  discharge-custody-check.yaml: |
+    apiVersion: backstage.io/v1alpha1
+    kind: Component
+    metadata:
+      name: discharge-custody-check
+      title: Discharge Custody Check
+      description: MHCBDCC tracks the 30 min interval checks for custody and daily MH evals for up to a 72 hour period
+      annotations:
+        github.com/project-slug: CDCR-OMS-MHCBDCC/discharge-custody-check
+        backstage.io/source-location: url:https://github.com/CDCR-OMS-MHCBDCC/
+      tags:
+        - mental-health
+        - custody-checks
+        - monitoring
+        - cdcr
+        - mhcbdcc
+      links:
+        - url: https://github.com/organizations/CDCR-OMS-MHCBDCC
+          title: GitHub Organization
+          icon: github
+    spec:
+      type: monorepo
+      lifecycle: production
+      owner: cdcr-dai
+      system: mental-health-monitoring
+    ---
+    apiVersion: backstage.io/v1alpha1
+    kind: System
+    metadata:
+      name: mental-health-monitoring
+      description: Mental Health and Custody Monitoring System
+    spec:
+      owner: cdcr-dai
+    ---
+    apiVersion: backstage.io/v1alpha1
+    kind: Group
+    metadata:
+      name: cdcr-dai
+      description: CDCR Data Analytics and Intelligence Team
+    spec:
+      type: team
+      children: []

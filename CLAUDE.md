@@ -6,7 +6,8 @@
 **Framework:** Backstage.io  
 **Purpose:** Unified developer portal for California Department of Corrections and Rehabilitation (CDCR) applications across 6 Kubernetes clusters  
 **Authentication:** GitHub OAuth (primary method)  
-**Status:** Production-ready with working authentication and multi-cluster support
+**Status:** Production-ready with working authentication and multi-cluster support  
+**Local Deployment:** Minikube deployment running but catalog files need mounting fix
 
 ## Architecture
 
@@ -278,7 +279,8 @@ docker run -p 7007:7007 --env-file .env ghcr.io/lijomadassery/backstage:latest
 
 ---
 
-**Last Updated:** 2025-06-18  
+**Last Updated:** 2025-06-27  
 **Backstage Version:** Latest stable  
 **Deployment Status:** Production-ready  
-**Documentation Status:** Complete
+**Documentation Status:** Complete  
+**Minikube Status:** Running in namespace `backstage-local`, catalog files need volume mounting

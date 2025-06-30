@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backstage-app-config
+  namespace: backstage-local
+data:
+  app-config.local.yaml: |
+    # Local override configuration for minikube deployment
+    catalog:
+      locations:
+        # CDCR Teams and Users
+        - type: file
+          target: /catalog/cdcr-teams.yaml
+          rules:
+            - allow: [User, Group]
+        
+        # CDCR Applications
+        - type: file
+          target: /catalog/discharge-custody-check.yaml
+          rules:
+            - allow: [Component, System, Group]
+        
+        - type: file
+          target: /catalog/coast-system.yaml
+          rules:
+            - allow: [Component, System, API, Group]
