@@ -31,6 +31,23 @@ spec:
           value: "https://backstage.cdcr.ca.gov"
         - name: NODE_ENV
           value: production
+        - name: HTTP_PROXY
+          valueFrom:
+            secretKeyRef:
+              name: backstage-secrets
+              key: HTTP_PROXY
+        - name: HTTPS_PROXY
+          valueFrom:
+            secretKeyRef:
+              name: backstage-secrets
+              key: HTTPS_PROXY
+        - name: NODE_TLS_REJECT_UNAUTHORIZED
+          valueFrom:
+            secretKeyRef:
+              name: backstage-secrets
+              key: NODE_TLS_REJECT_UNAUTHORIZED
+        - name: NO_PROXY
+          value: "localhost,127.0.0.1,10.0.0.0/8,192.168.0.0/16,kubernetes.default.svc.cluster.local,.cdcr.ca.gov"
         livenessProbe:
           httpGet:
             path: /healthcheck
