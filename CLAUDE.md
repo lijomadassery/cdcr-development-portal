@@ -279,8 +279,112 @@ docker run -p 7007:7007 --env-file .env ghcr.io/lijomadassery/backstage:latest
 
 ---
 
-**Last Updated:** 2025-06-27  
+## Network & Proxy Configuration (CRITICAL for CDCR)
+
+### ZScaler Proxy Setup
+Based on GitHub issue #29147, CDCR network requires specific proxy configuration:
+
+**IMPORTANT:** Only use HTTPS_PROXY, not HTTP_PROXY to avoid 503 errors.
+
+```yaml
+# kubernetes/backstage-secrets.yaml
+HTTPS_PROXY: "http://gateway.zscaler.net:80"  # Your actual ZScaler endpoint
+NODE_TLS_REJECT_UNAUTHORIZED: "0"  # Required for ZScaler certificate inspection
+```
+
+### Backend Proxy Configuration
+Added programmatic proxy support in `packages/backend/src/index.ts`:
+```typescript
+import * as https from 'https';
+import { HttpsProxyAgent } from 'https-proxy-agent';
+
+// Configure proxy if HTTPS_PROXY environment variable is set
+if (process.env.HTTPS_PROXY) {
+  https.globalAgent = new HttpsProxyAgent(process.env.HTTPS_PROXY);
+}
+```
+
+### Network Troubleshooting
+- **ETIMEDOUT errors:** Indicates proxy configuration needed
+- **503 errors:** Usually caused by setting both HTTP_PROXY and HTTPS_PROXY
+- **Certificate errors:** Set NODE_TLS_REJECT_UNAUTHORIZED="0" for ZScaler
+
+## Versioning & Releases
+
+### Semantic Versioning
+Project now uses semantic versioning with automated releases:
+- **Current Version:** 1.0.3
+- **Version File:** `VERSION` in root directory
+- **Release Script:** `scripts/release.sh`
+
+### Creating Releases
+```bash
+# Patch release (bug fixes)
+./scripts/release.sh patch
+
+# Minor release (new features)
+./scripts/release.sh minor
+
+# Major release (breaking changes)
+./scripts/release.sh major
+```
+
+### Docker Image Tags
+GitHub Actions automatically builds and tags:
+- `ghcr.io/lijomadassery/backstage:1.0.3` (specific version)
+- `ghcr.io/lijomadassery/backstage:1.0` (minor version)
+- `ghcr.io/lijomadassery/backstage:latest` (latest stable)
+
+## Recent Critical Fixes
+
+### v1.0.3 - Network Proxy Fix
+- Fixed GitHub API connectivity in CDCR network
+- Implemented HTTPS-only proxy configuration
+- Added programmatic proxy agent to backend
+- Based on solution from backstage/backstage#29147
+
+### v1.0.2 - Docker Build Fix
+- Fixed invalid Docker tag format in GitHub Actions
+- Changed SHA prefix from {{branch}}- to sha-
+
+### v1.0.1 - Theme Default Change
+- Set CDCR Dark theme as default (light theme has display issues)
+- Light theme still available via theme picker
+
+## Deployment Instructions for Platform Engineers
+
+### Latest Stable Release
+**Version:** v1.0.3  
+**Docker Image:** `ghcr.io/lijomadassery/backstage:1.0.3`  
+**GitHub Release:** https://github.com/lijomadassery/cdcr-development-portal/releases/tag/v1.0.3
+
+### Required Configuration
+1. Update `backstage-secrets.yaml` with:
+   - Actual ZScaler proxy URL (HTTPS_PROXY only)
+   - Real GitHub OAuth credentials
+   - Kubernetes service account tokens
+   - PostgreSQL password
+
+2. Deploy in order:
+   ```bash
+   kubectl apply -f kubernetes/namespace.yaml
+   kubectl apply -f kubernetes/postgres.yaml
+   kubectl apply -f kubernetes/backstage-secrets.yaml
+   kubectl apply -f kubernetes/backstage-deployment.yaml
+   kubectl apply -f kubernetes/network-policy.yaml  # if needed
+   ```
+
+### Post-Deployment Verification
+1. Check pod status: `kubectl get pods -n backstage`
+2. Check logs: `kubectl logs -f deployment/backstage -n backstage`
+3. Test GitHub connectivity (try importing a catalog)
+4. Verify all 6 Kubernetes clusters are accessible
+
+---
+
+**Last Updated:** 2025-06-30  
 **Backstage Version:** Latest stable  
-**Deployment Status:** Production-ready  
+**Current Release:** v1.0.3  
+**Deployment Status:** Production-ready with CDCR network fixes  
 **Documentation Status:** Complete  
-**Minikube Status:** Running in namespace `backstage-local`, catalog files need volume mounting
+**Minikube Status:** Working with proper Kubernetes configuration
