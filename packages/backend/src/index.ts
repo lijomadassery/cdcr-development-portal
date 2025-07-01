@@ -7,6 +7,8 @@
  */
 
 import { createBackend } from '@backstage/backend-defaults';
+import * as https from 'https';
+import { HttpsProxyAgent } from 'https-proxy-agent';
 
 const backend = createBackend();
 
@@ -52,5 +54,10 @@ backend.add(import('@backstage/plugin-search-backend-module-techdocs'));
 
 // kubernetes
 backend.add(import('@backstage/plugin-kubernetes-backend'));
+
+// Configure proxy if HTTPS_PROXY environment variable is set
+if (process.env.HTTPS_PROXY) {
+  https.globalAgent = new HttpsProxyAgent(process.env.HTTPS_PROXY);
+}
 
 backend.start();

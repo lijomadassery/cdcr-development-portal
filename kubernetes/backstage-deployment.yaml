@@ -31,11 +31,6 @@ spec:
           value: "https://backstage.cdcr.ca.gov"
         - name: NODE_ENV
           value: production
-        - name: HTTP_PROXY
-          valueFrom:
-            secretKeyRef:
-              name: backstage-secrets
-              key: HTTP_PROXY
         - name: HTTPS_PROXY
           valueFrom:
             secretKeyRef:
