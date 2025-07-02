@@ -30,7 +30,7 @@ RUN yarn cache clean && yarn install --network-timeout 600000
 
 # Build both frontend and backend
 WORKDIR /app
-RUN yarn build
+RUN yarn build:all
 
 # Extract the built backend bundle
 WORKDIR /app/packages/backend
