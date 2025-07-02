@@ -1,13 +1,82 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: cdcr-portal
-  description: An example of a Backstage application.
-  # Example for optional annotations
-  # annotations:
-  #   github.com/project-slug: backstage/backstage
-  #   backstage.io/techdocs-ref: dir:.
+  name: cdcr-development-portal
+  title: CDCR Development Portal
+  description: |
+    Backstage-based development portal for CDCR applications across 6 Kubernetes clusters.
+    Provides unified service catalog, Kubernetes monitoring, and GitOps workflow tracking.
+  annotations:
+    github.com/project-slug: lijomadassery/cdcr-development-portal
+    backstage.io/kubernetes-id: cdcr-development-portal
+    backstage.io/kubernetes-namespace: backstage-local
+    backstage.io/techdocs-ref: dir:.
+  tags:
+    - backstage
+    - portal
+    - kubernetes
+    - cdcr
+    - platform
+  links:
+    - url: https://github.com/lijomadassery/cdcr-development-portal
+      title: Source Code
+      icon: github
+    - url: https://github.com/lijomadassery/cdcr-development-portal/actions
+      title: CI/CD Pipeline
+      icon: github
+    - url: https://github.com/lijomadassery/cdcr-development-portal/releases
+      title: Releases
+      icon: github
 spec:
-  type: website
-  owner: john@example.com
-  lifecycle: experimental
+  type: service
+  lifecycle: production
+  owner: platform-team
+  system: developer-platform
+  providesApis:
+    - cdcr-portal-api
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: cdcr-portal-api
+  title: CDCR Portal API
+  description: Backend API for the CDCR Development Portal
+  annotations:
+    github.com/project-slug: lijomadassery/cdcr-development-portal
+  tags:
+    - api
+    - backstage
+    - rest
+spec:
+  type: openapi
+  lifecycle: production
+  owner: platform-team
+  system: developer-platform
+  definition: |
+    openapi: 3.0.0
+    info:
+      title: CDCR Portal API
+      version: 1.0.4
+      description: Backend API for CDCR Development Portal
+    paths:
+      /api/catalog:
+        get:
+          summary: Get catalog entities
+          description: Retrieve all entities from the service catalog
+      /api/kubernetes:
+        get:
+          summary: Get Kubernetes resources
+          description: Retrieve Kubernetes resources across clusters
+      /healthcheck:
+        get:
+          summary: Health check
+          description: Application health status
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: developer-platform
+  title: CDCR Developer Platform
+  description: Platform services for CDCR development teams
+spec:
+  owner: platform-team

@@ -6,6 +6,34 @@ metadata:
 data:
   app-config.local.yaml: |
     # Local override configuration for minikube deployment
+    
+    app:
+      baseUrl: http://localhost:7007
+      
+    backend:
+      baseUrl: http://localhost:7007
+      cors:
+        origin: http://localhost:7007
+    
+    # Local-only Kubernetes configuration - ONLY local minikube cluster
+    kubernetes:
+      serviceLocatorMethod:
+        type: 'multiTenant'
+      clusterLocatorMethods:
+        - type: 'config'
+          clusters:
+            - name: local-minikube
+              url: ${KUBERNETES_LOCAL_URL}
+              authProvider: 'serviceAccount'
+              serviceAccountToken: ${KUBERNETES_LOCAL_SA_TOKEN}
+              skipTLSVerify: true
+    
+    # GitHub integration for your personal repos/CI-CD
+    integrations:
+      github:
+        - host: github.com
+          token: ${GITHUB_TOKEN}
+          
     catalog:
       locations:
         # CDCR Teams and Users
@@ -13,14 +41,9 @@ data:
           target: /catalog/cdcr-teams.yaml
           rules:
             - allow: [User, Group]
-        
-        # CDCR Applications
+            
+        # Backstage itself as a component
         - type: file
-          target: /catalog/discharge-custody-check.yaml
+          target: /app/catalog-info.yaml
           rules:
-            - allow: [Component, System, Group]
-        
-        - type: file
-          target: /catalog/coast-system.yaml
-          rules:
-            - allow: [Component, System, API, Group]
+            - allow: [Component, System, API]
