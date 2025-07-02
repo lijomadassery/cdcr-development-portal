@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backstage
+  namespace: backstage-local
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backstage
+  template:
+    metadata:
+      labels:
+        app: backstage
+    spec:
+      serviceAccountName: backstage
+      containers:
+      - name: backstage
+        image: ghcr.io/lijomadassery/backstage:latest
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: 7007
+        envFrom:
+        - secretRef:
+            name: backstage-secrets
+        env:
+        - name: APP_CONFIG_app_baseUrl
+          value: "http://localhost:7000"
+        - name: APP_CONFIG_backend_baseUrl  
+          value: "http://localhost:7000"
+        - name: NODE_ENV
+          value: development
+        # No proxy settings needed in minikube
+        livenessProbe:
+          httpGet:
+            path: /healthcheck
+            port: 7007
+          initialDelaySeconds: 60
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /healthcheck
+            port: 7007
+          initialDelaySeconds: 30
+          periodSeconds: 5
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        volumeMounts:
+        - name: catalog-teams
+          mountPath: /catalog/cdcr-teams.yaml
+          subPath: cdcr-teams.yaml
+        - name: catalog-coast
+          mountPath: /catalog/coast-system.yaml
+          subPath: coast-system.yaml
+        - name: catalog-discharge
+          mountPath: /catalog/discharge-custody-check.yaml
+          subPath: discharge-custody-check.yaml
+      volumes:
+      - name: catalog-teams
+        configMap:
+          name: backstage-catalog
+      - name: catalog-coast
+        configMap:
+          name: backstage-catalog-coast
+      - name: catalog-discharge
+        configMap:
+          name: backstage-catalog-discharge
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backstage
+  namespace: backstage-local
+spec:
+  selector:
+    app: backstage
+  ports:
+  - name: http
+    port: 7000
+    targetPort: 7007

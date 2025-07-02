@@ -8,12 +8,12 @@ data:
     # Local override configuration for minikube deployment
     
     app:
-      baseUrl: http://localhost:7007
+      baseUrl: http://localhost:7000
       
     backend:
-      baseUrl: http://localhost:7007
+      baseUrl: http://localhost:7000
       cors:
-        origin: http://localhost:7007
+        origin: http://localhost:7000
     
     # Local-only Kubernetes configuration - ONLY local minikube cluster
     kubernetes:
