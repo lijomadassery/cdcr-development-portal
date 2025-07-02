@@ -4,7 +4,7 @@ metadata:
   name: backstage-k8s-view
 rules:
   - apiGroups: [""]
-    resources: ["pods", "services", "configmaps", "limitranges", "resourcequotas"]
+    resources: ["pods", "pods/log", "services", "configmaps", "limitranges", "resourcequotas"]
     verbs: ["get", "list", "watch"]
   - apiGroups: ["apps"]
     resources: ["deployments", "replicasets", "statefulsets", "daemonsets"]
