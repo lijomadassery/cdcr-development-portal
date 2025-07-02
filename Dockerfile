@@ -28,11 +28,12 @@ COPY . .
 # Clean and reinstall to resolve any patch issues
 RUN yarn cache clean && yarn install --network-timeout 600000
 
-# Build the backend
-WORKDIR /app/packages/backend
+# Build both frontend and backend
+WORKDIR /app
 RUN yarn build
 
 # Extract the built backend bundle
+WORKDIR /app/packages/backend
 RUN tar -xzf dist/bundle.tar.gz -C /app --strip-components=0
 WORKDIR /app
 
