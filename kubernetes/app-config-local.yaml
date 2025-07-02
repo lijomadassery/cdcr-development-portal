@@ -8,12 +8,12 @@ data:
     # Local override configuration for minikube deployment
     
     app:
-      baseUrl: http://localhost:7000
+      baseUrl: http://127.0.0.1:7001
       
     backend:
-      baseUrl: http://localhost:7000
+      baseUrl: http://127.0.0.1:7001
       cors:
-        origin: http://localhost:7000
+        origin: http://127.0.0.1:7001
     
     # Local-only Kubernetes configuration - ONLY local minikube cluster
     kubernetes:
@@ -23,16 +23,28 @@ data:
         - type: 'config'
           clusters:
             - name: local-minikube
-              url: ${KUBERNETES_LOCAL_URL}
+              url: https://kubernetes.default.svc
               authProvider: 'serviceAccount'
-              serviceAccountToken: ${KUBERNETES_LOCAL_SA_TOKEN}
               skipTLSVerify: true
+              namespace: backstage-local
     
     # GitHub integration for your personal repos/CI-CD
     integrations:
       github:
         - host: github.com
           token: ${GITHUB_TOKEN}
+          
+    # Auth configuration for GitHub
+    auth:
+      providers:
+        github:
+          development:
+            clientId: ${AUTH_GITHUB_CLIENT_ID}
+            clientSecret: ${AUTH_GITHUB_CLIENT_SECRET}
+            signIn:
+              resolvers:
+                # Use only username matching for now
+                - resolver: usernameMatchingUserEntityName
           
     catalog:
       locations:

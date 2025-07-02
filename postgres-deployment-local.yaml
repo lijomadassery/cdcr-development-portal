@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "3"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"postgres","namespace":"backstage-local"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"postgres"}},"template":{"metadata":{"labels":{"app":"postgres"}},"spec":{"containers":[{"env":[{"name":"POSTGRES_DB","value":"backstage_plugin_catalog"},{"name":"POSTGRES_USER","value":"backstage"},{"name":"POSTGRES_PASSWORD","value":"backstage123"}],"image":"postgres:13","name":"postgres","ports":[{"containerPort":5432}]}]}}}}
+  creationTimestamp: "2025-06-25T14:47:13Z"
+  generation: 3
+  labels:
+    app: cdcr-development-portal
+    backstage.io/kubernetes-id: cdcr-development-portal
+  name: postgres
+  namespace: backstage-local
+  resourceVersion: "698667"
+  uid: 6e185458-e73c-471b-b4f9-71d610a832aa
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: cdcr-development-portal
+      backstage.io/kubernetes-id: cdcr-development-portal
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/restartedAt: "2025-07-02T13:43:17+05:30"
+      creationTimestamp: null
+      labels:
+        app: cdcr-development-portal
+        backstage.io/kubernetes-id: cdcr-development-portal
+    spec:
+      containers:
+      - env:
+        - name: POSTGRES_DB
+          value: backstage_plugin_catalog
+        - name: POSTGRES_USER
+          value: backstage
+        - name: POSTGRES_PASSWORD
+          value: backstage123
+        image: postgres:13
+        imagePullPolicy: IfNotPresent
+        name: postgres
+        ports:
+        - containerPort: 5432
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+status:
+  availableReplicas: 1
+  conditions:
+  - lastTransitionTime: "2025-06-25T14:47:13Z"
+    lastUpdateTime: "2025-07-02T08:13:18Z"
+    message: ReplicaSet "postgres-7fd784d4c7" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  - lastTransitionTime: "2025-07-02T08:19:06Z"
+    lastUpdateTime: "2025-07-02T08:19:06Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  observedGeneration: 3
+  readyReplicas: 1
+  replicas: 1
+  updatedReplicas: 1

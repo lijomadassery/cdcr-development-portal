@@ -382,9 +382,32 @@ GitHub Actions automatically builds and tags:
 
 ---
 
-**Last Updated:** 2025-06-30  
+**Last Updated:** 2025-07-02  
 **Backstage Version:** Latest stable  
-**Current Release:** v1.0.3  
+**Current Release:** v1.0.4+  
 **Deployment Status:** Production-ready with CDCR network fixes  
 **Documentation Status:** Complete  
-**Minikube Status:** Working with proper Kubernetes configuration
+**Minikube Status:** Working with GitHub OAuth authentication
+
+## Recent Issues Resolved
+
+### GitHub OAuth Port Configuration Issue (July 2025)
+**Problem:** GitHub OAuth authentication was redirecting to `localhost:3000` instead of `localhost:7000` in minikube deployment.
+
+**Root Cause:** 
+- Minikube deployment had environment variables hardcoded to port 3000
+- GitHub OAuth app was correctly configured for port 7000
+- Environment variables in Kubernetes deployment were overriding app configuration
+
+**Solution:**
+- Updated minikube-specific deployment configuration 
+- Changed `APP_CONFIG_app_baseUrl` and `APP_CONFIG_backend_baseUrl` from port 3000 to 7000
+- Ensured consistency between GitHub OAuth callback URL and application configuration
+
+**Lesson Learned:** Always check Kubernetes deployment environment variables first when debugging configuration issues. The deployment-level env vars override application config files.
+
+**Files Modified:**
+- `kubernetes/app-config-local.yaml` - Updated baseUrl to port 7000
+- Minikube deployment environment variables (resolved by user with Cursor)
+
+**Current Status:** GitHub OAuth authentication working correctly in minikube with port 7000
