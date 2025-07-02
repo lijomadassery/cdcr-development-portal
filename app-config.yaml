@@ -1,6 +1,6 @@
 app:
   title: CDCR Development Portal
-  baseUrl: http://localhost:3000
+  baseUrl: http://localhost:7007
 
 organization:
   name: CDCR
