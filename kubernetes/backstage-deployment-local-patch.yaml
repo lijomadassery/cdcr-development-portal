@@ -31,6 +31,9 @@ spec:
         - name: catalog-discharge
           mountPath: /catalog/discharge-custody-check.yaml
           subPath: discharge-custody-check.yaml
+        - name: catalog-info
+          mountPath: /catalog/catalog-info.yaml
+          subPath: catalog-info.yaml
         - name: app-config-local
           mountPath: /app/app-config.local.yaml
           subPath: app-config.local.yaml
@@ -44,6 +47,9 @@ spec:
       - name: catalog-discharge
         configMap:
           name: backstage-catalog-discharge
+      - name: catalog-info
+        configMap:
+          name: backstage-catalog-info
       - name: app-config-local
         configMap:
           name: backstage-app-config 

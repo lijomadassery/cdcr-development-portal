@@ -43,8 +43,11 @@ data:
             clientSecret: ${AUTH_GITHUB_CLIENT_SECRET}
             signIn:
               resolvers:
-                # Use only username matching for now
+                # Primary resolver - matches GitHub username to Backstage user entity
                 - resolver: usernameMatchingUserEntityName
+                # Fallback resolvers for email-based matching
+                - resolver: emailMatchingUserEntityProfileEmail
+                - resolver: emailLocalPartMatchingUserEntityName
           
     catalog:
       locations:
