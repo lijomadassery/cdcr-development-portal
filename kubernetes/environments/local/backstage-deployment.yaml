@@ -16,7 +16,7 @@ spec:
       serviceAccountName: backstage
       containers:
       - name: backstage
-        image: ghcr.io/lijomadassery/backstage:latest
+        image: ghcr.io/lijomadassery/backstage:1.0.7
         imagePullPolicy: Always
         ports:
         - name: http
@@ -31,6 +31,23 @@ spec:
           value: "http://127.0.0.1:7001"
         - name: NODE_ENV
           value: development
+        - name: POSTGRES_HOST
+          value: "postgres"
+        - name: POSTGRES_PORT
+          value: "5432"
+        - name: POSTGRES_USER
+          value: "backstage"
+        - name: POSTGRES_PASSWORD
+          value: "backstage123"
+        args:
+        - "node"
+        - "packages/backend/dist/index.cjs.js"
+        - "--config"
+        - "app-config.yaml"
+        - "--config"
+        - "app-config.production.yaml"
+        - "--config"
+        - "app-config.local.yaml"
         # No proxy settings needed in minikube
         livenessProbe:
           httpGet:
@@ -55,22 +72,16 @@ spec:
         - name: catalog-teams
           mountPath: /catalog/cdcr-teams.yaml
           subPath: cdcr-teams.yaml
-        - name: catalog-coast
-          mountPath: /catalog/coast-system.yaml
-          subPath: coast-system.yaml
-        - name: catalog-discharge
-          mountPath: /catalog/discharge-custody-check.yaml
-          subPath: discharge-custody-check.yaml
+        - name: app-config-local
+          mountPath: /app/app-config.local.yaml
+          subPath: app-config.local.yaml
       volumes:
       - name: catalog-teams
         configMap:
           name: backstage-catalog
-      - name: catalog-coast
+      - name: app-config-local
         configMap:
-          name: backstage-catalog-coast
-      - name: catalog-discharge
-        configMap:
-          name: backstage-catalog-discharge
+          name: backstage-app-config
 ---
 apiVersion: v1
 kind: Service
