@@ -12,7 +12,7 @@ When deploying Backstage in Minikube with GitHub authentication, the login redir
 
 The issue was in the Minikube deployment configuration files:
 
-1. **minikube-deployment.yaml**: Environment variables were set to port 3000
+1. **backstage-deployment.yaml (local)**: Environment variables were set to port 3000
 2. **app-config-local.yaml**: Base URLs were set to port 7007
 3. **Missing Service Configuration**: No proper service configuration for Minikube deployment
 4. **Ingress Configuration**: Ingress was pointing to wrong port
@@ -21,7 +21,7 @@ The issue was in the Minikube deployment configuration files:
 
 ### 1. Updated Minikube Deployment Configuration
 
-**File**: `kubernetes/minikube-deployment.yaml`
+**File**: `kubernetes/environments/local/backstage-deployment.yaml`
 
 Changed environment variables:
 ```yaml
@@ -40,7 +40,7 @@ Changed environment variables:
 
 ### 2. Added Service Configuration
 
-**File**: `kubernetes/minikube-deployment.yaml`
+**File**: `kubernetes/environments/local/backstage-deployment.yaml`
 
 Added service configuration:
 ```yaml
@@ -61,7 +61,7 @@ spec:
 
 ### 3. Updated Ingress Configuration
 
-**File**: `kubernetes/minikube-ingress.yaml`
+**File**: `kubernetes/environments/local/ingress.yaml`
 
 Changed service port:
 ```yaml
@@ -76,7 +76,7 @@ port:
 
 ### 4. Updated App Configuration
 
-**File**: `kubernetes/app-config-local.yaml`
+**File**: `kubernetes/environments/local/app-config-local.yaml`
 
 Changed base URLs:
 ```yaml
@@ -103,9 +103,9 @@ backend:
 
 2. **Apply Updated Configurations**:
    ```bash
-   kubectl apply -f kubernetes/minikube-deployment.yaml
-   kubectl apply -f kubernetes/minikube-ingress.yaml
-   kubectl apply -f kubernetes/app-config-local.yaml
+   kubectl apply -f kubernetes/environments/local/backstage-deployment.yaml
+   kubectl apply -f kubernetes/environments/local/ingress.yaml
+   kubectl apply -f kubernetes/environments/local/app-config-local.yaml
    ```
 
 3. **Restart the Deployment**:

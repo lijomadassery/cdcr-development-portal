@@ -18,6 +18,18 @@ This guide covers deploying the CDCR Development Portal to your Kubernetes clust
 - Cert-manager for SSL certificates
 - Persistent storage for PostgreSQL
 
+## Required Credentials
+
+Before deployment, ensure you have the following credentials:
+
+### Developer Team Provides:
+- **GitHub OAuth App Credentials** (Client ID and Secret)
+- **GitHub Personal Access Token** with scopes: `repo`, `read:org`, `read:user`
+
+### Platform Team Creates:
+- **Kubernetes Service Account Tokens** for each cluster (dev, test, stage, prod, sandbox, ss-prod)
+- **PostgreSQL Database** credentials
+
 ## Step-by-Step Deployment
 
 ### 1. Choose Target Cluster
@@ -38,7 +50,7 @@ The Docker image is automatically built via GitHub Actions. Before deploying, ve
 docker pull ghcr.io/lijomadassery/backstage:latest
 ```
 
-The deployment manifest (`kubernetes/backstage-deployment.yaml`) is already configured to use:
+The deployment manifest (`kubernetes/environments/production/backstage-deployment.yaml`) is already configured to use:
 ```
 ghcr.io/lijomadassery/backstage:latest
 ```
@@ -52,7 +64,7 @@ docker push ghcr.io/lijomadassery/backstage:latest
 ### 3. Create Kubernetes Namespace and RBAC
 
 ```bash
-kubectl apply -f kubernetes/namespace.yaml
+kubectl apply -f kubernetes/base/namespace.yaml
 ```
 
 This creates:
@@ -63,7 +75,7 @@ This creates:
 ### 4. Set Up PostgreSQL Database
 
 ```bash
-kubectl apply -f kubernetes/postgres.yaml
+kubectl apply -f kubernetes/environments/production/postgres.yaml
 ```
 
 ### 5. Configure Secrets
@@ -72,19 +84,19 @@ kubectl apply -f kubernetes/postgres.yaml
 
 ```bash
 # Copy the template
-cp kubernetes/backstage-secrets.yaml kubernetes/backstage-secrets-actual.yaml
+cp kubernetes/environments/production/secrets.yaml.example kubernetes/environments/production/secrets.yaml
 
 # Edit with your actual values
 # - GitHub tokens and OAuth credentials
 # - Database passwords
 # - Kubernetes cluster service account tokens
-vim kubernetes/backstage-secrets-actual.yaml
+vim kubernetes/environments/production/secrets.yaml
 
 # Apply the secrets
-kubectl apply -f kubernetes/backstage-secrets-actual.yaml
+kubectl apply -f kubernetes/environments/production/secrets.yaml
 
 # Remove the file with actual secrets (don't commit to git!)
-rm kubernetes/backstage-secrets-actual.yaml
+rm kubernetes/environments/production/secrets.yaml
 ```
 
 ### 6. Get Service Account Tokens for Each Cluster
@@ -123,7 +135,7 @@ The deployment is pre-configured for `backstage.cdcr.ca.gov`. If you need a diff
      baseUrl: https://your-domain.com
    ```
 
-2. **Update ingress** in `kubernetes/backstage-deployment.yaml`:
+2. **Update ingress** in `kubernetes/environments/production/backstage-deployment.yaml`:
    ```yaml
    spec:
      tls:
@@ -136,7 +148,7 @@ The deployment is pre-configured for `backstage.cdcr.ca.gov`. If you need a diff
 ### 8. Deploy Backstage
 
 ```bash
-kubectl apply -f kubernetes/backstage-deployment.yaml
+kubectl apply -f kubernetes/environments/production/backstage-deployment.yaml
 ```
 
 ### 9. Verify Deployment

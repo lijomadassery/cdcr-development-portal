@@ -127,7 +127,11 @@ kubernetes:
 - `packages/backend/src/index.ts` - Backend service configuration
 
 ### Deployment Files
-- `kubernetes/` - Complete Kubernetes deployment manifests
+- `kubernetes/` - Organized Kubernetes deployment manifests
+  - `base/` - Shared resources (namespace, RBAC, network policies)
+  - `environments/local/` - Minikube/local development configs
+  - `environments/production/` - Production deployment configs
+  - `catalog/` - Catalog data ConfigMaps (local dev only)
 - `Dockerfile` - Multi-stage container build
 - `.github/workflows/` - CI/CD pipeline for automated builds
 - `docs/deployment-guide.md` - Comprehensive deployment instructions
@@ -382,7 +386,7 @@ GitHub Actions automatically builds and tags:
 
 ---
 
-**Last Updated:** 2025-07-02  
+**Last Updated:** 2025-07-08  
 **Backstage Version:** Latest stable  
 **Current Release:** v1.0.4+  
 **Deployment Status:** Production-ready with CDCR network fixes  
@@ -411,3 +415,46 @@ GitHub Actions automatically builds and tags:
 - Minikube deployment environment variables (resolved by user with Cursor)
 
 **Current Status:** GitHub OAuth authentication working correctly in minikube with port 7000
+
+### Kubernetes Deployment Structure Reorganization (July 8, 2025)
+**Problem:** Kubernetes deployment files were scattered and disorganized with:
+- Duplicate deployment files in project root (`backstage-deployment-local.yaml`, `postgres-deployment-local.yaml`)
+- Exposed credentials in `minikube-secrets.yaml`
+- Mixed production and local configs in same directory
+
+**Solution Implemented:**
+1. **Reorganized kubernetes/ directory structure:**
+   ```
+   kubernetes/
+   ├── base/                    # Shared configs (namespace, RBAC, network)
+   ├── environments/
+   │   ├── local/              # Minikube/local deployment
+   │   └── production/         # Production deployment
+   └── catalog/                # Catalog ConfigMaps
+   ```
+
+2. **Security improvements:**
+   - Removed files with exposed credentials
+   - Created `secrets.yaml.example` templates
+   - Updated `.gitignore` to exclude actual secrets
+
+3. **Deployment simplification:**
+   - Added `kustomization.yaml` files for easy deployment
+   - Created comprehensive README in kubernetes/ directory
+   - Updated all documentation to reflect new paths
+
+**Files Affected:**
+- Removed: `backstage-deployment-local.yaml`, `postgres-deployment-local.yaml`, `minikube-secrets.yaml`
+- Reorganized: All kubernetes manifests into proper directory structure
+- Updated: `docs/deployment-guide.md`, `docs/kubernetes-plugin-setup-guide.md`, `.gitignore`
+
+**Current Deployment Process:**
+```bash
+# Local deployment
+kubectl apply -k kubernetes/environments/local/
+
+# Production deployment  
+kubectl apply -k kubernetes/environments/production/
+```
+
+**Lesson Learned:** Maintain clear separation between environments and never commit secrets to version control.

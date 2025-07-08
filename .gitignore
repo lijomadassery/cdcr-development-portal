@@ -66,6 +66,12 @@ deployment-secrets.env
 deployment-secrets.json
 deployment-secrets.zip
 *.env
-kubernetes/minikube-deployment.yaml
-kubernetes/minikube-ingress.yaml
-kubernetes/minikube-secrets.yaml
+
+# Kubernetes secrets - NEVER commit actual secrets
+kubernetes/**/secrets.yaml
+!kubernetes/**/secrets.yaml.example
+
+# Local deployment exports
+*-deployment-local.yaml
+postgres-deployment-local.yaml
+backstage-deployment-local.yaml

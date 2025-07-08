@@ -250,8 +250,8 @@ kubectl apply -f kubernetes/backstage-rbac.yaml
 kubectl apply -f kubernetes/backstage-secrets.yaml
 
 # Apply deployments
-kubectl apply -f kubernetes/backstage-deployment.yaml
-kubectl apply -f kubernetes/postgres.yaml
+kubectl apply -f kubernetes/environments/production/backstage-deployment.yaml
+kubectl apply -f kubernetes/environments/production/postgres.yaml
 
 # Apply services
 kubectl apply -f kubernetes/backstage-service.yaml
@@ -360,8 +360,8 @@ kubectl rollout status deployment/backstage -n backstage-local
 
 # Delete and recreate deployments (for label changes)
 kubectl delete deployment backstage postgres -n backstage-local
-kubectl apply -f kubernetes/backstage-deployment.yaml
-kubectl apply -f kubernetes/postgres.yaml
+kubectl apply -f kubernetes/environments/production/backstage-deployment.yaml
+kubectl apply -f kubernetes/environments/production/postgres.yaml
 
 # Check service account token
 kubectl get secret backstage-secrets -n backstage-local -o yaml

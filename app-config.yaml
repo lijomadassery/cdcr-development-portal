@@ -79,6 +79,8 @@ auth:
             # Fallback resolvers for email-based matching
             - resolver: emailMatchingUserEntityProfileEmail
             - resolver: emailLocalPartMatchingUserEntityName
+            # Allow sign in even if no matching entity (development only)
+            - resolver: githubMatchingUserEntityName
         ## uncomment if using GitHub Enterprise
         # enterpriseInstanceUrl: ${AUTH_GITHUB_ENTERPRISE_INSTANCE_URL}
 
@@ -98,16 +100,14 @@ catalog:
       rules:
         - allow: [User, Group]
     
-    # CDCR Applications
+    # Backstage Portal Component
     - type: file
-      target: ../../catalog/discharge-custody-check.yaml
+      target: ../../catalog-info.yaml
       rules:
-        - allow: [Component, System, Group]
-    
-    - type: file
-      target: ../../catalog/coast-system.yaml
-      rules:
-        - allow: [Component, System, API, Group]
+        - allow: [Component, System, API]
+
+    # CDCR Applications - placeholder for future static catalog files
+    # Use scripts/generate-catalog.js to create catalog files for production
 
     # Local example data, file locations are relative to the backend process, typically `packages/backend`
     - type: file
