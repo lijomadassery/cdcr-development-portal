@@ -35,6 +35,7 @@
     "@backstage/plugin-search-react": "^1.9.1",
     "@backstage/plugin-user-settings": "^0.8.23",
     "@backstage/theme": "^0.6.6",
+    "@internal/plugin-kubernetes-logs": "^0.1.0",
     "@material-ui/core": "^4.12.2",
     "@material-ui/icons": "^4.9.1",
     "@weaveworksoss/backstage-plugin-flux": "^0.8.5",
