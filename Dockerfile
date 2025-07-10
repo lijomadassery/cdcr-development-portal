@@ -19,11 +19,11 @@ COPY .yarn .yarn
 COPY packages/app/package.json ./packages/app/
 COPY packages/backend/package.json ./packages/backend/
 
-# Install dependencies
-RUN yarn install --immutable --network-timeout 600000
-
-# Copy source code
+# Copy source code (includes plugins)
 COPY . .
+
+# Install dependencies
+RUN yarn install --network-timeout 600000
 
 # Clean and reinstall to resolve any patch issues
 RUN yarn cache clean && yarn install --network-timeout 600000

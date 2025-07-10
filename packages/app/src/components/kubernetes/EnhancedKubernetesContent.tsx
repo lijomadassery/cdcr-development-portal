@@ -3,7 +3,7 @@ import { Grid, Paper, Tab, Tabs, Box, Typography } from '@material-ui/core';
 import { EntityKubernetesContent } from '@backstage/plugin-kubernetes';
 import { InfoCard, Progress, ResponseErrorPanel } from '@backstage/core-components';
 import { useEntity } from '@backstage/plugin-catalog-react';
-import { LogsButton } from '@internal/plugin-kubernetes-logs';
+import { LogsButton } from 'kubernetes-logs';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
