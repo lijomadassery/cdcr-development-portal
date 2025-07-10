@@ -16,7 +16,7 @@ spec:
       serviceAccountName: backstage
       containers:
       - name: backstage
-        image: ghcr.io/lijomadassery/backstage:1.0.7
+        image: ghcr.io/lijomadassery/backstage:1.0.8
         imagePullPolicy: Always
         ports:
         - name: http
@@ -26,9 +26,9 @@ spec:
             name: backstage-secrets
         env:
         - name: APP_CONFIG_app_baseUrl
-          value: "http://127.0.0.1:7001"
+          value: "http://127.0.0.1:7000"
         - name: APP_CONFIG_backend_baseUrl  
-          value: "http://127.0.0.1:7001"
+          value: "http://127.0.0.1:7000"
         - name: NODE_ENV
           value: development
         - name: POSTGRES_HOST
