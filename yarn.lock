@@ -13188,7 +13188,7 @@ __metadata:
     "@types/react-dom": "npm:^18"
     "@weaveworksoss/backstage-plugin-flux": "npm:^0.8.5"
     cross-env: "npm:^7.0.0"
-    kubernetes-logs: "file:../../plugins/kubernetes-logs"
+    kubernetes-logs: "workspace:*"
     react: "npm:^18.0.2"
     react-dom: "npm:^18.0.2"
     react-router: "npm:^6.3.0"
@@ -21659,29 +21659,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"kubernetes-logs@file:../../plugins/kubernetes-logs::locator=app%40workspace%3Apackages%2Fapp":
-  version: 0.1.0
-  resolution: "kubernetes-logs@file:../../plugins/kubernetes-logs#../../plugins/kubernetes-logs::hash=a3151a&locator=app%40workspace%3Apackages%2Fapp"
-  dependencies:
-    "@backstage/catalog-model": "npm:^1.7.4"
-    "@backstage/core-components": "npm:^0.17.3"
-    "@backstage/core-plugin-api": "npm:^1.10.8"
-    "@backstage/plugin-catalog-react": "npm:^1.19.0"
-    "@backstage/plugin-kubernetes": "npm:^0.12.8"
-    "@backstage/theme": "npm:^0.6.6"
-    "@material-ui/core": "npm:^4.12.2"
-    "@material-ui/icons": "npm:^4.9.1"
-    "@material-ui/lab": "npm:4.0.0-alpha.61"
-    react-use: "npm:^17.5.0"
-  peerDependencies:
-    react: ^16.13.1 || ^17.0.0 || ^18.0.0
-    react-dom: ^16.13.1 || ^17.0.0 || ^18.0.0
-    react-router-dom: ^6.3.0
-  checksum: 10c0/1ed6329a195c4e15cbd4e5635cb86a3b76fc7ee73af01b426bc0ff67af289df8d18fadeb13942f31a8524c7d91cdfbe5bea3a162c62741413b2fdc1af1bdb80b
-  languageName: node
-  linkType: hard
-
-"kubernetes-logs@workspace:plugins/kubernetes-logs":
+"kubernetes-logs@workspace:*, kubernetes-logs@workspace:plugins/kubernetes-logs":
   version: 0.0.0-use.local
   resolution: "kubernetes-logs@workspace:plugins/kubernetes-logs"
   dependencies:
