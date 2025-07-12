@@ -21661,7 +21661,7 @@ __metadata:
 
 "kubernetes-logs@file:../../plugins/kubernetes-logs::locator=app%40workspace%3Apackages%2Fapp":
   version: 0.1.0
-  resolution: "kubernetes-logs@file:../../plugins/kubernetes-logs#../../plugins/kubernetes-logs::hash=9364c0&locator=app%40workspace%3Apackages%2Fapp"
+  resolution: "kubernetes-logs@file:../../plugins/kubernetes-logs#../../plugins/kubernetes-logs::hash=a3151a&locator=app%40workspace%3Apackages%2Fapp"
   dependencies:
     "@backstage/catalog-model": "npm:^1.7.4"
     "@backstage/core-components": "npm:^0.17.3"
@@ -21677,7 +21677,7 @@ __metadata:
     react: ^16.13.1 || ^17.0.0 || ^18.0.0
     react-dom: ^16.13.1 || ^17.0.0 || ^18.0.0
     react-router-dom: ^6.3.0
-  checksum: 10c0/0bff22409b86b76ce08e981d56e9098419b085242ad9e9cbc44dce01af1ebe8ae4b9635cd637ef0c049ae8e1f524ecd1280cf4ec043d23d8917e4eb5347a2a39
+  checksum: 10c0/1ed6329a195c4e15cbd4e5635cb86a3b76fc7ee73af01b426bc0ff67af289df8d18fadeb13942f31a8524c7d91cdfbe5bea3a162c62741413b2fdc1af1bdb80b
   languageName: node
   linkType: hard
 
