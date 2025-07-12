@@ -18,6 +18,7 @@ COPY package.json yarn.lock .yarnrc.yml ./
 COPY .yarn .yarn
 COPY packages/app/package.json ./packages/app/
 COPY packages/backend/package.json ./packages/backend/
+COPY plugins/kubernetes-logs/package.json ./plugins/kubernetes-logs/
 
 # Copy source code (includes plugins)
 COPY . .
