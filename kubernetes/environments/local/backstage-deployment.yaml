@@ -16,7 +16,7 @@ spec:
       serviceAccountName: backstage
       containers:
       - name: backstage
-        image: ghcr.io/lijomadassery/backstage:1.0.8
+        image: ghcr.io/lijomadassery/backstage:1.0.7
         imagePullPolicy: Always
         ports:
         - name: http

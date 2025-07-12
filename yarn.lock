@@ -13766,6 +13766,7 @@ __metadata:
     https-proxy-agent: "npm:^7.0.6"
     node-gyp: "npm:^10.0.0"
     pg: "npm:^8.11.3"
+    proxy-agent: "npm:^6.5.0"
   languageName: unknown
   linkType: soft
 
@@ -19270,7 +19271,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"http-proxy-agent@npm:^7.0.0":
+"http-proxy-agent@npm:^7.0.0, http-proxy-agent@npm:^7.0.1":
   version: 7.0.2
   resolution: "http-proxy-agent@npm:7.0.2"
   dependencies:
@@ -21587,7 +21588,7 @@ __metadata:
 
 "kubernetes-logs@file:../../plugins/kubernetes-logs::locator=app%40workspace%3Apackages%2Fapp":
   version: 0.1.0
-  resolution: "kubernetes-logs@file:../../plugins/kubernetes-logs#../../plugins/kubernetes-logs::hash=43f98b&locator=app%40workspace%3Apackages%2Fapp"
+  resolution: "kubernetes-logs@file:../../plugins/kubernetes-logs#../../plugins/kubernetes-logs::hash=9364c0&locator=app%40workspace%3Apackages%2Fapp"
   dependencies:
     "@backstage/catalog-model": "npm:^1.7.4"
     "@backstage/core-components": "npm:^0.17.3"
@@ -21603,7 +21604,7 @@ __metadata:
     react: ^16.13.1 || ^17.0.0 || ^18.0.0
     react-dom: ^16.13.1 || ^17.0.0 || ^18.0.0
     react-router-dom: ^6.3.0
-  checksum: 10c0/f6b6a5e7128db01fcf507adb1ed85cf5c2b2545158f9b1a251993e5b464c9b360c01875ca3a82cbd48ec09298496fc0b8807c98fc58bb53040efa14e3f0a74a4
+  checksum: 10c0/0bff22409b86b76ce08e981d56e9098419b085242ad9e9cbc44dce01af1ebe8ae4b9635cd637ef0c049ae8e1f524ecd1280cf4ec043d23d8917e4eb5347a2a39
   languageName: node
   linkType: hard
 
@@ -24220,7 +24221,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pac-proxy-agent@npm:^7.0.0":
+"pac-proxy-agent@npm:^7.0.0, pac-proxy-agent@npm:^7.1.0":
   version: 7.2.0
   resolution: "pac-proxy-agent@npm:7.2.0"
   dependencies:
@@ -25517,6 +25518,22 @@ __metadata:
     forwarded: "npm:0.2.0"
     ipaddr.js: "npm:1.9.1"
   checksum: 10c0/c3eed999781a35f7fd935f398b6d8920b6fb00bbc14287bc6de78128ccc1a02c89b95b56742bf7cf0362cc333c61d138532049c7dedc7a328ef13343eff81210
+  languageName: node
+  linkType: hard
+
+"proxy-agent@npm:^6.5.0":
+  version: 6.5.0
+  resolution: "proxy-agent@npm:6.5.0"
+  dependencies:
+    agent-base: "npm:^7.1.2"
+    debug: "npm:^4.3.4"
+    http-proxy-agent: "npm:^7.0.1"
+    https-proxy-agent: "npm:^7.0.6"
+    lru-cache: "npm:^7.14.1"
+    pac-proxy-agent: "npm:^7.1.0"
+    proxy-from-env: "npm:^1.1.0"
+    socks-proxy-agent: "npm:^8.0.5"
+  checksum: 10c0/7fd4e6f36bf17098a686d4aee3b8394abfc0b0537c2174ce96b0a4223198b9fafb16576c90108a3fcfc2af0168bd7747152bfa1f58e8fee91d3780e79aab7fd8
   languageName: node
   linkType: hard
 

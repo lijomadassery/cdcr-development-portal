@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Box, makeStyles } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   logsViewer: {
@@ -66,12 +66,12 @@ export const LogsViewer = ({ logs, searchTerm, follow }: LogsViewerProps) => {
   }, [logs, searchTerm, classes.highlight]);
 
   return (
-    <Box
+    <div
       ref={containerRef}
       className={classes.logsViewer}
       onScroll={handleScroll}
     >
       {highlightedLogs}
-    </Box>
+    </div>
   );
 };

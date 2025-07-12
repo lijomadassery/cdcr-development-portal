@@ -7,9 +7,6 @@
  */
 
 import { createBackend } from '@backstage/backend-defaults';
-import * as https from 'https';
-import * as http from 'http';
-import { HttpsProxyAgent } from 'https-proxy-agent';
 
 const backend = createBackend();
 
@@ -56,36 +53,7 @@ backend.add(import('@backstage/plugin-search-backend-module-techdocs'));
 // kubernetes
 backend.add(import('@backstage/plugin-kubernetes-backend'));
 
-// Configure proxy if HTTPS_PROXY environment variable is set
-// Use a more compatible approach for newer Node.js versions
-if (process.env.HTTPS_PROXY) {
-  const httpsProxyAgent = new HttpsProxyAgent(process.env.HTTPS_PROXY);
-  
-  // Override the default request methods to use the proxy agent
-  const originalHttpsRequest = https.request;
-  const originalHttpsGet = https.get;
-  
-  https.request = function(options: any, callback?: any) {
-    if (typeof options === 'string') {
-      options = new URL(options);
-    }
-    if (!options.agent && options.protocol === 'https:') {
-      options.agent = httpsProxyAgent;
-    }
-    return originalHttpsRequest.call(this, options, callback);
-  };
-  
-  https.get = function(options: any, callback?: any) {
-    if (typeof options === 'string') {
-      options = new URL(options);
-    }
-    if (!options.agent && options.protocol === 'https:') {
-      options.agent = httpsProxyAgent;
-    }
-    return originalHttpsGet.call(this, options, callback);
-  };
-  
-  console.log(`Configured HTTPS proxy agent: ${process.env.HTTPS_PROXY}`);
-}
+// Proxy configuration handled via environment variables
+// HTTPS_PROXY and NODE_TLS_REJECT_UNAUTHORIZED should be set in the environment
 
 backend.start();
