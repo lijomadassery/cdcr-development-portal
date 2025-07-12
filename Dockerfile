@@ -29,6 +29,10 @@ RUN yarn install --network-timeout 600000
 # Clean and reinstall to resolve any patch issues
 RUN yarn cache clean && yarn install --network-timeout 600000
 
+# Build plugins first
+WORKDIR /app/plugins/kubernetes-logs
+RUN yarn build
+
 # Build both frontend and backend
 WORKDIR /app
 RUN yarn build:all
