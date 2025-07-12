@@ -2,6 +2,8 @@
 
 This plugin extends the Backstage Kubernetes plugin with log viewing capabilities.
 
+**Version 1.2.0** - Production ready with proper build configuration.
+
 ## Features
 
 - View logs for individual pods
