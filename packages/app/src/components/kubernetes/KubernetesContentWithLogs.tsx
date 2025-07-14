@@ -31,7 +31,7 @@ import {
   StatusError,
   StatusAborted,
 } from '@backstage/core-components';
-import { LogsButton } from 'kubernetes-logs';
+import { LogsButton } from '@internal/plugin-kubernetes-logs';
 
 // Type definitions for Kubernetes objects
 interface V1ObjectMeta {

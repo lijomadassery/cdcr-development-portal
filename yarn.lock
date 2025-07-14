@@ -6076,6 +6076,36 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@internal/plugin-kubernetes-logs@workspace:*, @internal/plugin-kubernetes-logs@workspace:plugins/kubernetes-logs":
+  version: 0.0.0-use.local
+  resolution: "@internal/plugin-kubernetes-logs@workspace:plugins/kubernetes-logs"
+  dependencies:
+    "@backstage/catalog-model": "npm:^1.7.4"
+    "@backstage/cli": "npm:^0.33.0"
+    "@backstage/core-app-api": "npm:^1.17.1"
+    "@backstage/core-components": "npm:^0.17.3"
+    "@backstage/core-plugin-api": "npm:^1.10.8"
+    "@backstage/dev-utils": "npm:^1.1.5"
+    "@backstage/plugin-catalog-react": "npm:^1.19.0"
+    "@backstage/plugin-kubernetes": "npm:^0.12.8"
+    "@backstage/test-utils": "npm:^1.7.9"
+    "@backstage/theme": "npm:^0.6.6"
+    "@material-ui/core": "npm:^4.12.2"
+    "@material-ui/icons": "npm:^4.9.1"
+    "@material-ui/lab": "npm:4.0.0-alpha.61"
+    "@testing-library/jest-dom": "npm:^6.0.0"
+    "@testing-library/react": "npm:^14.0.0"
+    "@testing-library/user-event": "npm:^14.0.0"
+    "@types/react": "npm:^16.13.1 || ^17.0.0 || ^18.0.0"
+    msw: "npm:^1.0.0"
+    react-use: "npm:^17.5.0"
+  peerDependencies:
+    react: ^16.13.1 || ^17.0.0 || ^18.0.0
+    react-dom: ^16.13.1 || ^17.0.0 || ^18.0.0
+    react-router-dom: ^6.3.0
+  languageName: unknown
+  linkType: soft
+
 "@internationalized/date@npm:^3.8.2":
   version: 3.8.2
   resolution: "@internationalized/date@npm:3.8.2"
@@ -13177,6 +13207,7 @@ __metadata:
     "@backstage/plugin-user-settings": "npm:^0.8.23"
     "@backstage/test-utils": "npm:^1.7.9"
     "@backstage/theme": "npm:^0.6.6"
+    "@internal/plugin-kubernetes-logs": "workspace:*"
     "@material-ui/core": "npm:^4.12.2"
     "@material-ui/icons": "npm:^4.9.1"
     "@playwright/test": "npm:^1.32.3"
@@ -13188,7 +13219,6 @@ __metadata:
     "@types/react-dom": "npm:^18"
     "@weaveworksoss/backstage-plugin-flux": "npm:^0.8.5"
     cross-env: "npm:^7.0.0"
-    kubernetes-logs: "workspace:*"
     react: "npm:^18.0.2"
     react-dom: "npm:^18.0.2"
     react-router: "npm:^6.3.0"
@@ -21658,36 +21688,6 @@ __metadata:
   checksum: 10c0/fd2171b4dba706d35244fe60403a61671717a167453349813757999dad280049ddd0dcdba23cda197a5a3538f4c034cf0fd1f9caeb849be1ca1eecaa78db2f99
   languageName: node
   linkType: hard
-
-"kubernetes-logs@workspace:*, kubernetes-logs@workspace:plugins/kubernetes-logs":
-  version: 0.0.0-use.local
-  resolution: "kubernetes-logs@workspace:plugins/kubernetes-logs"
-  dependencies:
-    "@backstage/catalog-model": "npm:^1.7.4"
-    "@backstage/cli": "npm:^0.33.0"
-    "@backstage/core-app-api": "npm:^1.17.1"
-    "@backstage/core-components": "npm:^0.17.3"
-    "@backstage/core-plugin-api": "npm:^1.10.8"
-    "@backstage/dev-utils": "npm:^1.1.5"
-    "@backstage/plugin-catalog-react": "npm:^1.19.0"
-    "@backstage/plugin-kubernetes": "npm:^0.12.8"
-    "@backstage/test-utils": "npm:^1.7.9"
-    "@backstage/theme": "npm:^0.6.6"
-    "@material-ui/core": "npm:^4.12.2"
-    "@material-ui/icons": "npm:^4.9.1"
-    "@material-ui/lab": "npm:4.0.0-alpha.61"
-    "@testing-library/jest-dom": "npm:^6.0.0"
-    "@testing-library/react": "npm:^14.0.0"
-    "@testing-library/user-event": "npm:^14.0.0"
-    "@types/react": "npm:^16.13.1 || ^17.0.0 || ^18.0.0"
-    msw: "npm:^1.0.0"
-    react-use: "npm:^17.5.0"
-  peerDependencies:
-    react: ^16.13.1 || ^17.0.0 || ^18.0.0
-    react-dom: ^16.13.1 || ^17.0.0 || ^18.0.0
-    react-router-dom: ^6.3.0
-  languageName: unknown
-  linkType: soft
 
 "kubernetes-models@npm:^4.1.0, kubernetes-models@npm:^4.3.1":
   version: 4.4.2

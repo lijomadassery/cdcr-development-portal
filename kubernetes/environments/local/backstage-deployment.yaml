@@ -89,7 +89,7 @@ metadata:
   name: backstage
   namespace: backstage-local
 spec:
-  selector:
+  selector:le
     app: backstage
   ports:
   - name: http
