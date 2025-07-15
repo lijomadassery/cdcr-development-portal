@@ -32,6 +32,9 @@ jobs:
     - name: Install dependencies
       run: yarn install --immutable
 
+    - name: Run TypeScript compilation
+      run: yarn tsc
+
     - name: Build kubernetes-logs plugin
       run: |
         cd plugins/kubernetes-logs
@@ -39,9 +42,6 @@ jobs:
 
     - name: Run tests
       run: yarn test:all || true  # Don't fail on test issues initially
-
-    - name: Run TypeScript compilation
-      run: yarn tsc
 
     - name: Build application
       run: yarn build:all
