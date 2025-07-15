@@ -35,6 +35,9 @@ jobs:
     - name: Run tests
       run: yarn test:all || true  # Don't fail on test issues initially
 
+    - name: Run TypeScript compilation
+      run: yarn tsc
+
     - name: Build application
       run: yarn build:all
 
