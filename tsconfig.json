@@ -12,6 +12,11 @@
   "compilerOptions": {
     "outDir": "dist-types",
     "rootDir": ".",
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@internal/plugin-kubernetes-logs": ["plugins/kubernetes-logs/src"],
+      "@internal/plugin-kubernetes-logs/*": ["plugins/kubernetes-logs/src/*"]
+    }
   }
 }
