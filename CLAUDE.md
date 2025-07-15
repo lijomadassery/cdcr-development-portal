@@ -80,5 +80,3 @@
 - **Local Development:** Ensure port consistency across OAuth, service, and forwarding settings
 - **Important:** Always use 127.0.0.1 instead of localhost for GitHub OAuth callbacks
 - **Port Mapping:** Critical for successful authentication and service discovery
-
-(Rest of the file remains unchanged)
