@@ -32,8 +32,13 @@ jobs:
     - name: Install dependencies
       run: yarn install --immutable
 
+    - name: Generate TypeScript declarations
+      run: yarn tsc --noEmit
+
     - name: Build kubernetes-logs plugin
-      run: yarn workspace @internal/plugin-kubernetes-logs build
+      run: |
+        cd plugins/kubernetes-logs
+        yarn build
 
     - name: Run tests
       run: yarn test:all || true  # Don't fail on test issues initially
