@@ -1,19 +1,15 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { 
-  SignInPageProps,
   Page,
   Progress,
-  SignInPage,
 } from '@backstage/core-components';
-import { useApi, githubAuthApiRef, alertApiRef } from '@backstage/core-plugin-api';
+import { useApi, githubAuthApiRef } from '@backstage/core-plugin-api';
 import { 
-  Grid, 
   Button, 
   Typography, 
-  Box,
-  Paper,
   makeStyles,
   Container,
+  Paper,
   Fade,
   Grow,
   useMediaQuery,
@@ -24,7 +20,6 @@ import SecurityIcon from '@material-ui/icons/Security';
 import CloudIcon from '@material-ui/icons/Cloud';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import PersonIcon from '@material-ui/icons/Person';
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -294,7 +289,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const ModernSignInPage = (props: SignInPageProps) => {
+export const ModernSignInPage = (props: any) => {
   const classes = useStyles();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));

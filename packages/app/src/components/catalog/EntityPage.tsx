@@ -43,10 +43,10 @@ import {
 
 
 import {
-  EntityKubernetesContent,
   isKubernetesAvailable,
 } from '@backstage/plugin-kubernetes';
 import { KubernetesContentWithLogs } from '../kubernetes/KubernetesContentWithLogs';
+
 
 import {
   EntityGithubActionsContent,

@@ -1,8 +1,6 @@
 import React from 'react';
 import { 
   useKubernetesObjects,
-  KubernetesObjects,
-  GroupedResponses,
   EntityKubernetesContent,
 } from '@backstage/plugin-kubernetes';
 import { useEntity } from '@backstage/plugin-catalog-react';
@@ -13,7 +11,6 @@ import {
   Grid,
   Typography,
   Chip,
-  Box,
   makeStyles,
   Table,
   TableBody,
@@ -157,7 +154,7 @@ export const KubernetesContentWithLogs = () => {
 
     if (!kubernetesObjects) return podsByCluster;
 
-    kubernetesObjects.items.forEach((item: GroupedResponses) => {
+    kubernetesObjects.items.forEach((item: any) => {
       const clusterName = item.cluster.name;
       
       if (!podsByCluster[clusterName]) {
@@ -165,7 +162,7 @@ export const KubernetesContentWithLogs = () => {
       }
 
       // Look for pods in the resources
-      item.resources.forEach((resource) => {
+      item.resources.forEach((resource: any) => {
         if (resource.type === 'pods') {
           const pods = resource.resources as V1Pod[];
           podsByCluster[clusterName].push(...pods);

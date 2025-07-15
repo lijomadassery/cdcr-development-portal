@@ -8,16 +8,7 @@ import {
   CatalogTableColumnsFunc,
 } from '@backstage/plugin-catalog';
 import {
-  EntityKindPicker,
-  EntityTypePicker,
-  EntityOwnerPicker,
-  EntityTagPicker,
-  UserListPicker,
-  EntityListProvider,
-} from '@backstage/plugin-catalog-react';
-import {
   CatalogImportPage,
-  catalogImportPlugin,
 } from '@backstage/plugin-catalog-import';
 import { orgPlugin } from '@backstage/plugin-org';
 import { SearchPage } from '@backstage/plugin-search';
@@ -26,16 +17,11 @@ import { apis } from './apis';
 import { entityPage } from './components/catalog/EntityPage';
 import { searchPage } from './components/search/SearchPage';
 import { Root } from './components/Root';
-import { CatalogPage } from './components/catalog/CatalogPage';
 
 import {
   AlertDisplay,
   OAuthRequestDialog,
   SignInPage,
-  Content,
-  ContentHeader,
-  PageWithHeader,
-  SupportButton,
 } from '@backstage/core-components';
 import { createApp } from '@backstage/app-defaults';
 import { AppRouter, FlatRoutes } from '@backstage/core-app-api';
@@ -46,7 +32,7 @@ import { githubAuthApiRef } from '@backstage/core-plugin-api';
 import { cdcrLightTheme, cdcrDarkTheme, UnifiedThemeProvider } from './themes/simpleCdcrTheme';
 
 // Custom columns function to remove the TAGS column from the catalog table
-const customCatalogColumns: CatalogTableColumnsFunc = entityListContext => {
+const customCatalogColumns: CatalogTableColumnsFunc = () => {
   return [
     CatalogTable.columns.createNameColumn({ defaultKind: 'Component' }),
     CatalogTable.columns.createSystemColumn(),
@@ -151,7 +137,7 @@ const FilterHider = () => {
                         label.parentElement;
           
           if (parent && parent !== sidebarFilters) {
-            parent.style.display = 'none';
+            (parent as HTMLElement).style.display = 'none';
           }
         }
       });

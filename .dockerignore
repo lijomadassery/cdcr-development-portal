@@ -4,4 +4,6 @@
 node_modules
 packages/*/node_modules
 plugins
+!plugins/kubernetes-logs
+!plugins/kubernetes-logs/**
 *.local.yaml

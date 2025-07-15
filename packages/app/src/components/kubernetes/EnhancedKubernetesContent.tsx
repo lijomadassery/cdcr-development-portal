@@ -1,7 +1,7 @@
 import React from 'react';
-import { Grid, Paper, Tab, Tabs, Box, Typography } from '@material-ui/core';
+import { Paper, Tab, Tabs, Box, Typography } from '@material-ui/core';
 import { EntityKubernetesContent } from '@backstage/plugin-kubernetes';
-import { InfoCard, Progress, ResponseErrorPanel } from '@backstage/core-components';
+import { InfoCard } from '@backstage/core-components';
 import { useEntity } from '@backstage/plugin-catalog-react';
 import { LogsButton } from '@internal/plugin-kubernetes-logs';
 import { makeStyles } from '@material-ui/core/styles';
@@ -56,7 +56,7 @@ export const EnhancedKubernetesContent = () => {
   const { entity } = useEntity();
   const [tabValue, setTabValue] = React.useState(0);
 
-  const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+  const handleTabChange = (_event: React.ChangeEvent<{}>, newValue: number) => {
     setTabValue(newValue);
   };
 

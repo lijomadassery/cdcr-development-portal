@@ -1,4 +1,3 @@
-import React from 'react';
 import { makeStyles, Theme, Paper, Typography } from '@material-ui/core';
 import {
   CatalogTable,
@@ -9,9 +8,7 @@ import {
   EntityKindPicker,
   EntityTypePicker,
   EntityOwnerPicker,
-  CatalogFilterLayout,
 } from '@backstage/plugin-catalog-react';
-import { catalogPlugin } from '@backstage/plugin-catalog';
 import {
   Content,
   Header,

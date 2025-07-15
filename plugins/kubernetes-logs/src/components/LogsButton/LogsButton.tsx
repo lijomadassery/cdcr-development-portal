@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { IconButton, Tooltip } from '@material-ui/core';
 import DescriptionIcon from '@material-ui/icons/Description';
 import { LogsModal } from '../LogsModal';
