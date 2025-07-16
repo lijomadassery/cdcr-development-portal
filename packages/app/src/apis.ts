@@ -13,6 +13,7 @@ import {
 } from '@backstage/core-plugin-api';
 import { GithubAuth } from '@backstage/core-app-api';
 
+
 export const apis: AnyApiFactory[] = [
   // GitHub Auth API - Required for GitHub authentication
   createApiFactory({
@@ -39,4 +40,6 @@ export const apis: AnyApiFactory[] = [
   
   // SCM Auth - Default factory for SCM authentication
   ScmAuth.createDefaultApiFactory(),
+
+  // Kubernetes API - Let the plugin handle the factory
 ];

@@ -178,31 +178,50 @@ export const KubernetesContentWithLogs = () => {
     cluster => podsByCluster[cluster].length > 0
   );
 
+  // Debug logging
+  console.log('KubernetesContentWithLogs Debug:', {
+    kubernetesObjects,
+    podsByCluster,
+    hasPods,
+    loading,
+    error
+  });
+
   return (
     <>
       {/* Original Kubernetes content */}
       <EntityKubernetesContent />
       
-      {/* Add logs section if there are pods */}
-      {!loading && !error && hasPods && (
+      {/* Add logs section - always show if we have kubernetes data */}
+      {!loading && !error && (
         <Accordion className={classes.accordion}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Typography variant="h6">Pod Logs</Typography>
           </AccordionSummary>
           <AccordionDetails>
             <Grid container spacing={2} direction="column">
-              {Object.entries(podsByCluster).map(([clusterName, pods]) => {
-                if (pods.length === 0) return null;
-                
-                return (
-                  <Grid item key={clusterName}>
-                    <Typography variant="subtitle1" gutterBottom>
-                      Cluster: {clusterName}
-                    </Typography>
-                    <PodLogsTable pods={pods} clusterName={clusterName} />
-                  </Grid>
-                );
-              })}
+              {hasPods ? (
+                Object.entries(podsByCluster).map(([clusterName, pods]) => {
+                  if (pods.length === 0) return null;
+                  
+                  return (
+                    <Grid item key={clusterName}>
+                      <Typography variant="subtitle1" gutterBottom>
+                        Cluster: {clusterName}
+                      </Typography>
+                      <PodLogsTable pods={pods} clusterName={clusterName} />
+                    </Grid>
+                  );
+                })
+              ) : (
+                <Grid item>
+                  <Typography variant="body2" color="textSecondary">
+                    🔍 Custom Logs Plugin Active - No pods found with matching labels.
+                    <br />
+                    Debug info: {JSON.stringify({ hasPods, podCount: Object.keys(podsByCluster).length })}
+                  </Typography>
+                </Grid>
+              )}
             </Grid>
           </AccordionDetails>
         </Accordion>

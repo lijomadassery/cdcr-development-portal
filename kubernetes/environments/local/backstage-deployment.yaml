@@ -12,12 +12,13 @@ spec:
     metadata:
       labels:
         app: backstage
+        backstage.io/kubernetes-id: cdcr-development-portal
     spec:
       serviceAccountName: backstage
       containers:
       - name: backstage
-        image: ghcr.io/lijomadassery/backstage:1.0.7
-        imagePullPolicy: Always
+        image: backstage:plugin-fixed
+        imagePullPolicy: Never
         ports:
         - name: http
           containerPort: 7007
@@ -26,9 +27,9 @@ spec:
             name: backstage-secrets
         env:
         - name: APP_CONFIG_app_baseUrl
-          value: "http://127.0.0.1:7000"
+          value: "http://127.0.0.1:7001"
         - name: APP_CONFIG_backend_baseUrl  
-          value: "http://127.0.0.1:7000"
+          value: "http://127.0.0.1:7001"
         - name: NODE_ENV
           value: development
         - name: POSTGRES_HOST
@@ -89,7 +90,7 @@ metadata:
   name: backstage
   namespace: backstage-local
 spec:
-  selector:le
+  selector:
     app: backstage
   ports:
   - name: http

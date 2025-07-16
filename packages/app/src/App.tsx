@@ -13,6 +13,8 @@ import {
 import { orgPlugin } from '@backstage/plugin-org';
 import { SearchPage } from '@backstage/plugin-search';
 import { UserSettingsPage } from '@backstage/plugin-user-settings';
+import { kubernetesPlugin } from '@backstage/plugin-kubernetes';
+import { kubernetesLogsPlugin } from '@internal/plugin-kubernetes-logs';
 import { apis } from './apis';
 import { entityPage } from './components/catalog/EntityPage';
 import { searchPage } from './components/search/SearchPage';
@@ -46,6 +48,7 @@ const customCatalogColumns: CatalogTableColumnsFunc = () => {
 
 const app = createApp({
   apis,
+  plugins: [kubernetesPlugin, kubernetesLogsPlugin],
   themes: [
     {
       id: 'cdcr-dark',
