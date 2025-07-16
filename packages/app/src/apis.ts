@@ -10,11 +10,8 @@ import {
   githubAuthApiRef,
   discoveryApiRef,
   oauthRequestApiRef,
-  ConfigApi,
-  DiscoveryApi,
 } from '@backstage/core-plugin-api';
 import { GithubAuth } from '@backstage/core-app-api';
-import { kubernetesApiRef, kubernetesApiFactory } from '@backstage/plugin-kubernetes';
 
 export const apis: AnyApiFactory[] = [
   // GitHub Auth API - Required for GitHub authentication
@@ -42,7 +39,4 @@ export const apis: AnyApiFactory[] = [
   
   // SCM Auth - Default factory for SCM authentication
   ScmAuth.createDefaultApiFactory(),
-
-  // Kubernetes API - Required for Kubernetes plugin
-  kubernetesApiFactory,
 ];
