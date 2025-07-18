@@ -89,14 +89,13 @@ export const useDeploymentLogs = ({
         },
       });
         
-        if (!response.ok) {
-          throw new Error(`Failed to fetch logs: ${response.statusText}`);
-        }
-        
-        const logs = await response.text();
-        setLogsData(prev => ({ ...prev, [podName]: logs }));
-        setLoading(prev => ({ ...prev, [podName]: false }));
+      if (!response.ok) {
+        throw new Error(`Failed to fetch logs: ${response.statusText}`);
       }
+      
+      const logs = await response.text();
+      setLogsData(prev => ({ ...prev, [podName]: logs }));
+      setLoading(prev => ({ ...prev, [podName]: false }));
     } catch (error: any) {
       if (error.name !== 'AbortError') {
         console.error(`Error fetching logs for pod ${podName}:`, error);
