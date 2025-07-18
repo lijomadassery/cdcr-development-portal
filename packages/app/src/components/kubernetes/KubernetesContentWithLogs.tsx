@@ -1,7 +1,6 @@
 import React from 'react';
 import { 
   useKubernetesObjects,
-  EntityKubernetesContent,
 } from '@backstage/plugin-kubernetes';
 import { useEntity } from '@backstage/plugin-catalog-react';
 import {
@@ -19,8 +18,13 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Box,
+  IconButton,
+  Portal,
+  Button,
 } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import DescriptionIcon from '@material-ui/icons/Description';
 import { 
   StatusOK,
   StatusPending,
@@ -28,14 +32,24 @@ import {
   StatusError,
   StatusAborted,
 } from '@backstage/core-components';
-import { LogsButton } from '@internal/plugin-kubernetes-logs';
+import { LogsModal, DeploymentLogsModal } from '@internal/plugin-kubernetes-logs';
 
 // Type definitions for Kubernetes objects
+interface V1OwnerReference {
+  apiVersion: string;
+  kind: string;
+  name: string;
+  uid: string;
+  controller?: boolean;
+  blockOwnerDeletion?: boolean;
+}
+
 interface V1ObjectMeta {
   name?: string;
   namespace?: string;
   labels?: Record<string, string>;
   annotations?: Record<string, string>;
+  ownerReferences?: V1OwnerReference[];
 }
 
 interface V1Container {
@@ -58,7 +72,22 @@ interface V1Pod {
   status?: V1PodStatus;
 }
 
-const useStyles = makeStyles(theme => ({
+interface V1Deployment {
+  metadata?: V1ObjectMeta;
+  spec?: {
+    replicas?: number;
+    selector?: {
+      matchLabels?: Record<string, string>;
+    };
+  };
+  status?: {
+    replicas?: number;
+    readyReplicas?: number;
+    unavailableReplicas?: number;
+  };
+}
+
+const useStyles = makeStyles((theme: import('@material-ui/core/styles').Theme) => ({
   accordion: {
     marginTop: theme.spacing(2),
   },
@@ -71,6 +100,9 @@ const useStyles = makeStyles(theme => ({
   },
   statusCell: {
     width: 120,
+  },
+  contentWrapper: {
+    position: 'relative',
   },
 }));
 
@@ -92,12 +124,107 @@ const getPodStatus = (pod: V1Pod): React.ReactElement => {
   }
 };
 
+interface DeploymentTableProps {
+  deployments: V1Deployment[];
+  deploymentPods: Record<string, V1Pod[]>;
+  clusterName: string;
+  onLogClick: (pod: { podName: string; namespace: string; containerName?: string; clusterName: string }) => void;
+  onDeploymentLogsClick: (deployment: { 
+    deploymentName: string; 
+    namespace: string; 
+    pods: Array<{ name: string; namespace: string; status?: string }>; 
+    clusterName: string 
+  }) => void;
+}
+
+const DeploymentTable = ({ 
+  deployments, 
+  deploymentPods, 
+  clusterName, 
+  onLogClick,
+  onDeploymentLogsClick 
+}: DeploymentTableProps) => {
+  const classes = useStyles();
+
+  return (
+    <TableContainer component={Paper} variant="outlined">
+      <Table size="small">
+        <TableHead>
+          <TableRow>
+            <TableCell>Deployment Name</TableCell>
+            <TableCell>Namespace</TableCell>
+            <TableCell>Replicas</TableCell>
+            <TableCell>Pods</TableCell>
+            <TableCell>Actions</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {deployments.map((deployment) => {
+            const deploymentName = deployment.metadata?.name || 'Unknown';
+            const namespace = deployment.metadata?.namespace || 'default';
+            const pods = deploymentPods[deploymentName] || [];
+            
+            return (
+              <TableRow key={`${namespace}-${deploymentName}`}>
+                <TableCell>{deploymentName}</TableCell>
+                <TableCell>{namespace}</TableCell>
+                <TableCell>
+                  {deployment.status?.readyReplicas || 0}/{deployment.spec?.replicas || 0}
+                </TableCell>
+                <TableCell>
+                  {pods.map((pod) => (
+                    <Box key={pod.metadata?.name} display="flex" alignItems="center" gap={1}>
+                      {getPodStatus(pod)}
+                      <Typography variant="body2">{pod.metadata?.name}</Typography>
+                      <IconButton
+                        size="small"
+                        onClick={() => onLogClick({
+                          podName: pod.metadata?.name || '',
+                          namespace: pod.metadata?.namespace || 'default',
+                          clusterName
+                        })}
+                      >
+                        <DescriptionIcon fontSize="small" />
+                      </IconButton>
+                    </Box>
+                  ))}
+                </TableCell>
+                <TableCell>
+                  <Button
+                    size="small"
+                    variant="contained"
+                    color="primary"
+                    disabled={pods.length === 0}
+                    onClick={() => onDeploymentLogsClick({
+                      deploymentName,
+                      namespace,
+                      pods: pods.map(pod => ({
+                        name: pod.metadata?.name || '',
+                        namespace: pod.metadata?.namespace || 'default',
+                        status: pod.status?.phase
+                      })),
+                      clusterName
+                    })}
+                  >
+                    View All Logs ({pods.length})
+                  </Button>
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
+};
+
 interface PodLogsTableProps {
   pods: V1Pod[];
   clusterName: string;
+  onLogClick: (pod: { podName: string; namespace: string; containerName?: string; clusterName: string }) => void;
 }
 
-const PodLogsTable = ({ pods, clusterName }: PodLogsTableProps) => {
+const PodLogsTable = ({ pods, clusterName, onLogClick }: PodLogsTableProps) => {
   const classes = useStyles();
 
   return (
@@ -129,11 +256,17 @@ const PodLogsTable = ({ pods, clusterName }: PodLogsTableProps) => {
                 ))}
               </TableCell>
               <TableCell className={classes.logsCell}>
-                <LogsButton
-                  podName={pod.metadata?.name || ''}
-                  namespace={pod.metadata?.namespace || 'default'}
-                  clusterName={clusterName}
-                />
+                <IconButton
+                  size="small"
+                  onClick={() => onLogClick({
+                    podName: pod.metadata?.name || '',
+                    namespace: pod.metadata?.namespace || 'default',
+                    clusterName
+                  })}
+                  data-testid="logs-button"
+                >
+                  <DescriptionIcon fontSize="small" />
+                </IconButton>
               </TableCell>
             </TableRow>
           ))}
@@ -146,86 +279,356 @@ const PodLogsTable = ({ pods, clusterName }: PodLogsTableProps) => {
 export const KubernetesContentWithLogs = () => {
   const classes = useStyles();
   const { entity } = useEntity();
-  const { kubernetesObjects, loading, error } = useKubernetesObjects(entity);
+  
+  // Memoize entity to prevent useKubernetesObjects from re-running constantly
+  const memoizedEntity = React.useMemo(() => entity, [entity.metadata?.uid, entity.metadata?.name]);
+  const { kubernetesObjects, loading, error } = useKubernetesObjects(memoizedEntity);
+  
+  // Simple modal state with stable references
+  const [modalData, setModalData] = React.useState<{
+    open: boolean;
+    podName: string;
+    namespace: string;
+    containerName?: string;
+    clusterName: string;
+  } | null>(null);
 
-  // Extract pods from the Kubernetes objects
-  const getPodsByCluster = (): Record<string, V1Pod[]> => {
-    const podsByCluster: Record<string, V1Pod[]> = {};
+  // Deployment logs modal state
+  const [deploymentModalData, setDeploymentModalData] = React.useState<{
+    open: boolean;
+    deploymentName: string;
+    namespace: string;
+    pods: Array<{
+      name: string;
+      namespace: string;
+      status?: string;
+    }>;
+    clusterName: string;
+  } | null>(null);
 
-    if (!kubernetesObjects) return podsByCluster;
+  // Handler for log button clicks - use stable reference
+  const handleLogClick = React.useCallback((pod: {
+    podName: string;
+    namespace: string;
+    containerName?: string;
+    clusterName: string;
+  }) => {
+    console.log('🔍 Opening logs for pod:', pod);
+    setModalData({
+      open: true,
+      podName: pod.podName,
+      namespace: pod.namespace,
+      containerName: pod.containerName,
+      clusterName: pod.clusterName
+    });
+  }, []);
+
+  // Handler for closing the modal - use stable reference
+  const handleCloseModal = React.useCallback(() => {
+    console.log('🔍 Closing logs modal');
+    setModalData(null);
+  }, []);
+
+  // Handler for deployment logs
+  const handleDeploymentLogsClick = React.useCallback((deployment: {
+    deploymentName: string;
+    namespace: string;
+    pods: Array<{ name: string; namespace: string; status?: string }>;
+    clusterName: string;
+  }) => {
+    console.log('🔍 Opening deployment logs for:', deployment);
+    setDeploymentModalData({
+      open: true,
+      ...deployment
+    });
+  }, []);
+
+  // Handler for closing deployment modal
+  const handleCloseDeploymentModal = React.useCallback(() => {
+    console.log('🔍 Closing deployment logs modal');
+    setDeploymentModalData(null);
+  }, []);
+
+  // Memoize expensive computation to prevent re-calculation on every render
+  const { podsByCluster, deploymentsByCluster } = React.useMemo(() => {
+    const pods: Record<string, V1Pod[]> = {};
+    const deployments: Record<string, V1Deployment[]> = {};
+
+    if (!kubernetesObjects) return { podsByCluster: pods, deploymentsByCluster: deployments };
 
     kubernetesObjects.items.forEach((item: any) => {
       const clusterName = item.cluster.name;
       
-      if (!podsByCluster[clusterName]) {
-        podsByCluster[clusterName] = [];
+      if (!pods[clusterName]) {
+        pods[clusterName] = [];
+      }
+      if (!deployments[clusterName]) {
+        deployments[clusterName] = [];
       }
 
-      // Look for pods in the resources
+      // Look for pods and deployments in the resources
+      // First, let's see what types we're getting
+      console.log('🔍 All resource types in cluster', clusterName, ':', 
+        item.resources.map((r: any) => r.type).join(', '));
+      
       item.resources.forEach((resource: any) => {
         if (resource.type === 'pods') {
-          const pods = resource.resources as V1Pod[];
-          podsByCluster[clusterName].push(...pods);
+          const podList = resource.resources as V1Pod[];
+          pods[clusterName].push(...podList);
+        } else if (resource.type === 'deployments' || resource.type === 'deployments.v1.apps') {
+          const deploymentList = resource.resources as V1Deployment[];
+          deployments[clusterName].push(...deploymentList);
+          console.log('🎯 Found deployments:', deploymentList.length);
         }
       });
     });
 
-    return podsByCluster;
-  };
+    return { podsByCluster: pods, deploymentsByCluster: deployments };
+  }, [kubernetesObjects]);
 
-  const podsByCluster = getPodsByCluster();
-  const hasPods = Object.keys(podsByCluster).some(
-    cluster => podsByCluster[cluster].length > 0
+  // Group pods by their owner (ReplicaSet/Deployment pattern)
+  const podGroupings = React.useMemo(() => {
+    const groupings: Record<string, Record<string, { name: string; kind: string; pods: V1Pod[] }>> = {};
+    
+    Object.entries(podsByCluster).forEach(([clusterName, pods]) => {
+      groupings[clusterName] = {};
+      
+      // Group pods by their owner reference or app label
+      const tempGroups: Record<string, V1Pod[]> = {};
+      
+      pods.forEach(pod => {
+        let groupKey = 'standalone';
+        
+        // Check if pod has owner references (managed by ReplicaSet/Deployment)
+        const ownerRefs = pod.metadata?.ownerReferences;
+        if (ownerRefs && ownerRefs.length > 0) {
+          // For ReplicaSet owners, extract the deployment name (before the hash)
+          const owner = ownerRefs[0];
+          if (owner.kind === 'ReplicaSet' && owner.name) {
+            // ReplicaSet names are typically: deployment-name-hash
+            const parts = owner.name.split('-');
+            if (parts.length >= 2) {
+              // Remove the last part (hash) to get deployment name
+              groupKey = parts.slice(0, -1).join('-');
+            }
+          } else {
+            groupKey = owner.name || 'unknown';
+          }
+        } else {
+          // Fallback to app label for standalone pods
+          groupKey = pod.metadata?.labels?.['app'] || 
+                    pod.metadata?.labels?.['app.kubernetes.io/name'] || 
+                    'standalone';
+        }
+        
+        if (!tempGroups[groupKey]) {
+          tempGroups[groupKey] = [];
+        }
+        tempGroups[groupKey].push(pod);
+      });
+      
+      // Convert to final structure
+      Object.entries(tempGroups).forEach(([key, pods]) => {
+        groupings[clusterName][key] = {
+          name: key,
+          kind: 'Deployment', // We assume it's a deployment for now
+          pods: pods
+        };
+      });
+    });
+    
+    return groupings;
+  }, [podsByCluster]);
+
+  const hasPods = React.useMemo(() => 
+    Object.keys(podsByCluster).some(cluster => podsByCluster[cluster].length > 0),
+    [podsByCluster]
   );
 
-  // Debug logging
-  console.log('KubernetesContentWithLogs Debug:', {
-    kubernetesObjects,
-    podsByCluster,
-    hasPods,
-    loading,
-    error
-  });
+
+  // Debug logging - only log when modal state changes to reduce render noise
+  React.useEffect(() => {
+    console.log('🔍 KubernetesContentWithLogs mounted, version: deployment-logs-v3');
+    if (modalData) {
+      console.log('🔍 [v2] Modal opened for:', modalData);
+    }
+  }, [modalData]);
 
   return (
-    <>
-      {/* Original Kubernetes content */}
-      <EntityKubernetesContent />
-      
-      {/* Add logs section - always show if we have kubernetes data */}
-      {!loading && !error && (
-        <Accordion className={classes.accordion}>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography variant="h6">Pod Logs</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <Grid container spacing={2} direction="column">
-              {hasPods ? (
-                Object.entries(podsByCluster).map(([clusterName, pods]) => {
-                  if (pods.length === 0) return null;
-                  
-                  return (
-                    <Grid item key={clusterName}>
-                      <Typography variant="subtitle1" gutterBottom>
-                        Cluster: {clusterName}
-                      </Typography>
-                      <PodLogsTable pods={pods} clusterName={clusterName} />
-                    </Grid>
-                  );
-                })
-              ) : (
-                <Grid item>
-                  <Typography variant="body2" color="textSecondary">
-                    🔍 Custom Logs Plugin Active - No pods found with matching labels.
-                    <br />
-                    Debug info: {JSON.stringify({ hasPods, podCount: Object.keys(podsByCluster).length })}
-                  </Typography>
-                </Grid>
-              )}
+    <div className={classes.contentWrapper}>
+      {/* Custom logs interface - primary content */}
+      {loading ? (
+        <Typography>Loading Kubernetes resources...</Typography>
+      ) : error ? (
+        <Typography color="error">Error loading Kubernetes resources: {error.message}</Typography>
+      ) : (
+        <Grid container spacing={2} direction="column">
+          <Grid item>
+            <Typography variant="h5" gutterBottom>
+              Kubernetes Pod Logs
+            </Typography>
+          </Grid>
+          
+          {/* Show pod groupings (apps) */}
+          {hasPods && Object.keys(podGroupings).some(cluster => 
+            Object.keys(podGroupings[cluster]).some(group => 
+              podGroupings[cluster][group].pods.length > 1
+            )
+          ) && (
+            <>
+              <Grid item>
+                <Typography variant="h6" gutterBottom>
+                  Applications (Grouped Pods)
+                </Typography>
+              </Grid>
+              {Object.entries(podGroupings).map(([clusterName, groups]) => {
+                // Only show groups with more than 1 pod
+                const multiPodGroups = Object.entries(groups).filter(([_, group]) => group.pods.length > 1);
+                if (multiPodGroups.length === 0) return null;
+                
+                return (
+                  <Grid item key={`groups-${clusterName}`}>
+                    <Typography variant="subtitle1" gutterBottom>
+                      Cluster: {clusterName}
+                    </Typography>
+                    <TableContainer component={Paper} variant="outlined">
+                      <Table size="small">
+                        <TableHead>
+                          <TableRow>
+                            <TableCell>Application</TableCell>
+                            <TableCell>Namespace</TableCell>
+                            <TableCell>Pod Count</TableCell>
+                            <TableCell>Pods</TableCell>
+                            <TableCell>Actions</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {multiPodGroups.map(([groupKey, group]) => {
+                            const namespace = group.pods[0]?.metadata?.namespace || 'default';
+                            
+                            return (
+                              <TableRow key={`${clusterName}-${groupKey}`}>
+                                <TableCell>{group.name}</TableCell>
+                                <TableCell>{namespace}</TableCell>
+                                <TableCell>{group.pods.length}</TableCell>
+                                <TableCell>
+                                  <Box display="flex" flexDirection="column" gap={1}>
+                                    {group.pods.map((pod) => (
+                                      <Box key={pod.metadata?.name} display="flex" alignItems="center" gap={1}>
+                                        {getPodStatus(pod)}
+                                        <Typography variant="body2">{pod.metadata?.name}</Typography>
+                                        <IconButton
+                                          size="small"
+                                          onClick={() => handleLogClick({
+                                            podName: pod.metadata?.name || '',
+                                            namespace: pod.metadata?.namespace || 'default',
+                                            clusterName
+                                          })}
+                                        >
+                                          <DescriptionIcon fontSize="small" />
+                                        </IconButton>
+                                      </Box>
+                                    ))}
+                                  </Box>
+                                </TableCell>
+                                <TableCell>
+                                  <Button
+                                    size="small"
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={() => handleDeploymentLogsClick({
+                                      deploymentName: group.name,
+                                      namespace,
+                                      pods: group.pods.map(pod => ({
+                                        name: pod.metadata?.name || '',
+                                        namespace: pod.metadata?.namespace || 'default',
+                                        status: pod.status?.phase
+                                      })),
+                                      clusterName
+                                    })}
+                                  >
+                                    View All Logs ({group.pods.length})
+                                  </Button>
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </Grid>
+                );
+              })}
+            </>
+          )}
+          
+          {/* Show individual pods section */}
+          {hasPods && (
+            <>
+              <Grid item>
+                <Typography variant="h6" gutterBottom>
+                  Individual Pods
+                </Typography>
+              </Grid>
+              {Object.entries(podsByCluster).map(([clusterName, pods]) => {
+                if (pods.length === 0) return null;
+                
+                return (
+                  <Grid item key={clusterName}>
+                    <Typography variant="subtitle1" gutterBottom>
+                      Cluster: {clusterName}
+                    </Typography>
+                    <PodLogsTable 
+                      pods={pods} 
+                      clusterName={clusterName} 
+                      onLogClick={handleLogClick}
+                    />
+                  </Grid>
+                );
+              })}
+            </>
+          )}
+          
+          {!hasPods && (
+            <Grid item>
+              <Typography variant="body1" color="textSecondary">
+                🔍 No pods found with matching Kubernetes labels for this entity.
+                <br />
+                Make sure your component has the appropriate backstage.io/kubernetes-id annotation.
+                <br />
+                Debug info: {JSON.stringify({ hasPods, podCount: Object.keys(podsByCluster).length })}
+              </Typography>
             </Grid>
-          </AccordionDetails>
-        </Accordion>
+          )}
+        </Grid>
       )}
-    </>
+
+      {/* Logs Modal - Always rendered in Portal to prevent unmounting */}
+      <Portal>
+        {modalData && (
+          <LogsModal
+            key="kubernetes-logs-modal"
+            open={modalData.open}
+            onClose={handleCloseModal}
+            podName={modalData.podName}
+            namespace={modalData.namespace}
+            containerName={modalData.containerName}
+            clusterName={modalData.clusterName}
+          />
+        )}
+        {deploymentModalData && (
+          <DeploymentLogsModal
+            key="deployment-logs-modal"
+            open={deploymentModalData.open}
+            onClose={handleCloseDeploymentModal}
+            deploymentName={deploymentModalData.deploymentName}
+            namespace={deploymentModalData.namespace}
+            pods={deploymentModalData.pods}
+            clusterName={deploymentModalData.clusterName}
+            maxPods={10}
+          />
+        )}
+      </Portal>
+    </div>
   );
 };

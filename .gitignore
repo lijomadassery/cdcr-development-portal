@@ -75,3 +75,5 @@ kubernetes/**/secrets.yaml
 *-deployment-local.yaml
 postgres-deployment-local.yaml
 backstage-deployment-local.yaml
+backup-secret.yaml
+current-secret.yaml

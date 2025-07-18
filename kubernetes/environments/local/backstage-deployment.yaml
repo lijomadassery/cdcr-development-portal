@@ -17,7 +17,7 @@ spec:
       serviceAccountName: backstage
       containers:
       - name: backstage
-        image: backstage:plugin-fixed
+        image: backstage:deployment-logs-v4
         imagePullPolicy: Never
         ports:
         - name: http
@@ -45,8 +45,6 @@ spec:
         - "packages/backend/dist/index.cjs.js"
         - "--config"
         - "app-config.yaml"
-        - "--config"
-        - "app-config.production.yaml"
         - "--config"
         - "app-config.local.yaml"
         # No proxy settings needed in minikube
@@ -76,6 +74,9 @@ spec:
         - name: app-config-local
           mountPath: /app/app-config.local.yaml
           subPath: app-config.local.yaml
+        - name: app-config-main
+          mountPath: /app/app-config.yaml
+          subPath: app-config.yaml
       volumes:
       - name: catalog-teams
         configMap:
@@ -83,6 +84,9 @@ spec:
       - name: app-config-local
         configMap:
           name: backstage-app-config
+      - name: app-config-main
+        configMap:
+          name: backstage-main-config
 ---
 apiVersion: v1
 kind: Service

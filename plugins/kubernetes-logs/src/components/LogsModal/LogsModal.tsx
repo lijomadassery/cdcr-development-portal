@@ -70,8 +70,16 @@ export const LogsModal = ({
 }: LogsModalProps) => {
   const classes = useStyles();
   const [searchTerm, setSearchTerm] = useState('');
-  const [follow, setFollow] = useState(true);
+  const [follow, setFollow] = useState(false);
   const [showTimestamps, setShowTimestamps] = useState(true);
+  
+  console.log('🔍 LogsModal props:', {
+    open,
+    podName,
+    namespace,
+    containerName,
+    clusterName,
+  });
   
   const { logs, loading, error, refetch } = usePodLogs({
     podName,
@@ -80,6 +88,14 @@ export const LogsModal = ({
     clusterName,
     follow,
     timestamps: showTimestamps,
+  });
+
+  console.log('🔍 LogsModal state:', {
+    logs: logs ? `${logs.length} bytes` : 'empty',
+    loading,
+    error: error?.message,
+    follow,
+    showTimestamps,
   });
 
   const handleDownload = () => {
@@ -101,6 +117,7 @@ export const LogsModal = ({
       maxWidth="lg"
       fullWidth
       aria-labelledby="logs-dialog-title"
+      key={`${podName}-${namespace}-${clusterName}`}
     >
       <DialogTitle disableTypography className={classes.dialogTitle}>
         <Typography variant="h6">

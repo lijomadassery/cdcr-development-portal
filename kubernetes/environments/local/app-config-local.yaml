@@ -14,7 +14,9 @@ data:
     backend:
       baseUrl: http://127.0.0.1:7001
       cors:
-        origin: http://127.0.0.1:7001
+        origin: 
+          - http://127.0.0.1:7001
+          - http://localhost:7001
       database:
         client: pg
         connection:
@@ -23,6 +25,18 @@ data:
           user: backstage
           password: backstage123
           database: backstage_plugin_catalog
+    
+    auth:
+      providers:
+        github:
+          development:
+            clientId: ${AUTH_GITHUB_CLIENT_ID}
+            clientSecret: ${AUTH_GITHUB_CLIENT_SECRET}
+            signIn:
+              resolvers:
+                - resolver: usernameMatchingUserEntityName
+                - resolver: emailMatchingUserEntityProfileEmail
+                - resolver: emailLocalPartMatchingUserEntityName
     
     # Local minikube Kubernetes configuration
     kubernetes:
@@ -36,6 +50,11 @@ data:
               authProvider: 'serviceAccount'
               skipTLSVerify: true
               namespace: backstage-local
+      objectTypes:
+        - 'pods'
+        - 'services'
+        - 'deployments'
+        - 'replicasets'
     
     catalog:
       locations:

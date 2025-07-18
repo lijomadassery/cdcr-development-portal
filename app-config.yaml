@@ -79,8 +79,6 @@ auth:
             # Fallback resolvers for email-based matching
             - resolver: emailMatchingUserEntityProfileEmail
             - resolver: emailLocalPartMatchingUserEntityName
-            # Allow sign in even if no matching entity (development only)
-            - resolver: githubMatchingUserEntityName
         ## uncomment if using GitHub Enterprise
         # enterpriseInstanceUrl: ${AUTH_GITHUB_ENTERPRISE_INSTANCE_URL}
 
@@ -146,10 +144,21 @@ catalog:
 
 kubernetes:
   # see https://backstage.io/docs/features/kubernetes/configuration for kubernetes configuration options
-  # Kubernetes integration is disabled until cluster credentials are configured
-  # Uncomment and configure the clusters below when ready
-  # serviceLocatorMethod:
-  #   type: 'multiTenant'
+  serviceLocatorMethod:
+    type: 'multiTenant'
+  clusterLocatorMethods:
+    - type: 'config'
+      clusters:
+        - name: local-minikube
+          url: https://kubernetes.default.svc
+          authProvider: 'serviceAccount'
+          skipTLSVerify: true
+          namespace: backstage-local
+  objectTypes:
+    - 'pods'
+    - 'services'
+    - 'deployments'
+    - 'replicasets'
   # clusterLocatorMethods:
   #   - type: 'config'
   #     clusters:

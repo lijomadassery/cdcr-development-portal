@@ -87,6 +87,12 @@ m
 - Support for multi-cluster build tracking and deployment pipelines
 - **Custom Plugin Implementation for Logs:** Added custom logging plugin to track and aggregate logs across different Kubernetes clusters
 
+## Log Window
+- Implemented a custom log window plugin for tracking application logs across multiple Kubernetes clusters
+- Provides centralized log aggregation and real-time log streaming
+- Supports filtering and searching logs by namespace, pod, and time range
+- Integrated with Kubernetes API for seamless log retrieval
+
 ---
 
 ## Complete Local Development Deployment Process (July 16, 2025)
@@ -256,3 +262,6 @@ lsof -i :7001
 **Status:** ✅ Fully functional with Kubernetes plugin working
 **Date:** July 16, 2025
 **Next Steps:** Commit changes and create formal release once tested
+
+## Save
+- Added memory about saving configurations and best practices for local development deployment

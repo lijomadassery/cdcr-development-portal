@@ -44,6 +44,7 @@ import {
 
 import {
   isKubernetesAvailable,
+  EntityKubernetesContent,
 } from '@backstage/plugin-kubernetes';
 import { KubernetesContentWithLogs } from '../kubernetes/KubernetesContentWithLogs';
 
@@ -150,9 +151,16 @@ const serviceEntityPage = (
       title="Kubernetes"
       if={isKubernetesAvailable}
     >
-      <KubernetesContentWithLogs />
+      <EntityKubernetesContent />
     </EntityLayout.Route>
 
+    <EntityLayout.Route
+      path="/pod-logs"
+      title="Pod Logs"
+      if={isKubernetesAvailable}
+    >
+      <KubernetesContentWithLogs />
+    </EntityLayout.Route>
 
     <EntityLayout.Route path="/dependencies" title="Dependencies">
       <Grid container spacing={3} alignItems="stretch">
@@ -182,7 +190,6 @@ const serviceEntityPage = (
       </Grid>
     </EntityLayout.Route>
 
-
   </EntityLayout>
 );
 
@@ -199,6 +206,14 @@ const websiteEntityPage = (
     <EntityLayout.Route
       path="/kubernetes"
       title="Kubernetes"
+      if={isKubernetesAvailable}
+    >
+      <EntityKubernetesContent />
+    </EntityLayout.Route>
+
+    <EntityLayout.Route
+      path="/pod-logs"
+      title="Pod Logs"
       if={isKubernetesAvailable}
     >
       <KubernetesContentWithLogs />

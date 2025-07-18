@@ -47,6 +47,16 @@ export const usePodLogs = ({
     setError(null);
     setLogs('');
 
+    console.log('🔍 Fetching logs for:', {
+      podName,
+      namespace,
+      containerName,
+      clusterName,
+      follow,
+      timestamps,
+      tailLines,
+    });
+
     try {
       // Build query parameters
       const queryParams = new URLSearchParams({
@@ -65,6 +75,8 @@ export const usePodLogs = ({
       // Construct the path for the logs endpoint
       const path = `/api/v1/namespaces/${namespace}/pods/${podName}/log?${queryParams.toString()}`;
 
+      console.log('🔍 Making API call to:', path);
+
       // Make the API call through the Kubernetes proxy
       const response = await kubernetesApi.proxy({
         clusterName,
@@ -74,8 +86,12 @@ export const usePodLogs = ({
         },
       });
 
+      console.log('🔍 API Response status:', response.status, response.statusText);
+
       if (!response.ok) {
-        throw new Error(`Failed to fetch logs: ${response.statusText}`);
+        const errorText = await response.text().catch(() => 'Unknown error');
+        console.error('🔍 API Error response:', errorText);
+        throw new Error(`Failed to fetch logs: ${response.status} ${response.statusText} - ${errorText}`);
       }
 
       if (follow) {
@@ -87,18 +103,26 @@ export const usePodLogs = ({
           throw new Error('Response body is not readable');
         }
 
+        console.log('🔍 Starting stream read...');
+
         // Read the stream
         while (true) {
           const { done, value } = await reader.read();
           
-          if (done) break;
+          if (done) {
+            console.log('🔍 Stream complete');
+            break;
+          }
           
           const chunk = decoder.decode(value, { stream: true });
+          console.log('🔍 Received chunk:', chunk.length, 'bytes');
           setLogs(prev => prev + chunk);
         }
       } else {
         // For non-streaming logs, read the entire response
         const text = await response.text();
+        console.log('🔍 Received logs:', text.length, 'bytes');
+        console.log('🔍 Logs preview:', text.substring(0, 200) + (text.length > 200 ? '...' : ''));
         setLogs(text);
       }
 
@@ -106,7 +130,7 @@ export const usePodLogs = ({
     } catch (err: any) {
       // Don't set error if the request was aborted
       if (err.name !== 'AbortError') {
-        console.error('Error fetching logs:', err);
+        console.error('🔍 Error fetching logs:', err);
         setError(err instanceof Error ? err : new Error('Failed to fetch logs'));
       }
       setLoading(false);
@@ -123,7 +147,9 @@ export const usePodLogs = ({
   ]);
 
   useEffect(() => {
-    fetchLogs();
+    if (podName && namespace && clusterName) {
+      fetchLogs();
+    }
 
     // Cleanup function
     return () => {
@@ -131,7 +157,7 @@ export const usePodLogs = ({
         abortControllerRef.current.abort();
       }
     };
-  }, [fetchLogs]);
+  }, [podName, namespace, clusterName, follow, timestamps, tailLines]);
 
   return {
     logs,
