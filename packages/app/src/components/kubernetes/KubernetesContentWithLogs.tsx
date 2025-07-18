@@ -320,7 +320,7 @@ export const KubernetesContentWithLogs = () => {
     }
   }, [modalData]);
 
-  const errorMessage = typeof error === 'string' ? error : error?.message || error?.toString() || 'Unknown error';
+  const errorMessage = error ? (typeof error === 'string' ? error : String(error)) : 'Unknown error';
 
   return (
     <div className={classes.contentWrapper}>
