@@ -17,7 +17,7 @@ spec:
       serviceAccountName: backstage
       containers:
       - name: backstage
-        image: backstage:deployment-logs-v4
+        image: backstage:github-latest
         imagePullPolicy: Never
         ports:
         - name: http
