@@ -68,20 +68,7 @@ interface V1Pod {
   status?: V1PodStatus;
 }
 
-interface V1Deployment {
-  metadata?: V1ObjectMeta;
-  spec?: {
-    replicas?: number;
-    selector?: {
-      matchLabels?: Record<string, string>;
-    };
-  };
-  status?: {
-    replicas?: number;
-    readyReplicas?: number;
-    unavailableReplicas?: number;
-  };
-}
+
 
 const useStyles = makeStyles(() => ({
   contentWrapper: {
@@ -107,99 +94,7 @@ const getPodStatus = (pod: V1Pod): React.ReactElement => {
   }
 };
 
-interface DeploymentTableProps {
-  deployments: V1Deployment[];
-  deploymentPods: Record<string, V1Pod[]>;
-  clusterName: string;
-  onLogClick: (pod: { podName: string; namespace: string; containerName?: string; clusterName: string }) => void;
-  onDeploymentLogsClick: (deployment: { 
-    deploymentName: string; 
-    namespace: string; 
-    pods: Array<{ name: string; namespace: string; status?: string }>; 
-    clusterName: string 
-  }) => void;
-}
 
-const DeploymentTable = ({ 
-  deployments, 
-  deploymentPods, 
-  clusterName, 
-  onLogClick,
-  onDeploymentLogsClick 
-}: DeploymentTableProps) => {
-  const classes = useStyles();
-
-  return (
-    <TableContainer component={Paper} variant="outlined">
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            <TableCell>Deployment Name</TableCell>
-            <TableCell>Namespace</TableCell>
-            <TableCell>Replicas</TableCell>
-            <TableCell>Pods</TableCell>
-            <TableCell>Actions</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {deployments.map((deployment) => {
-            const deploymentName = deployment.metadata?.name || 'Unknown';
-            const namespace = deployment.metadata?.namespace || 'default';
-            const pods = deploymentPods[deploymentName] || [];
-            
-            return (
-              <TableRow key={`${namespace}-${deploymentName}`}>
-                <TableCell>{deploymentName}</TableCell>
-                <TableCell>{namespace}</TableCell>
-                <TableCell>
-                  {deployment.status?.readyReplicas || 0}/{deployment.spec?.replicas || 0}
-                </TableCell>
-                <TableCell>
-                  {pods.map((pod) => (
-                    <Box key={pod.metadata?.name} display="flex" alignItems="center" gap={1}>
-                      {getPodStatus(pod)}
-                      <Typography variant="body2">{pod.metadata?.name}</Typography>
-                      <IconButton
-                        size="small"
-                        onClick={() => onLogClick({
-                          podName: pod.metadata?.name || '',
-                          namespace: pod.metadata?.namespace || 'default',
-                          clusterName
-                        })}
-                      >
-                        <DescriptionIcon fontSize="small" />
-                      </IconButton>
-                    </Box>
-                  ))}
-                </TableCell>
-                <TableCell>
-                  <Button
-                    size="small"
-                    variant="contained"
-                    color="primary"
-                    disabled={pods.length === 0}
-                    onClick={() => onDeploymentLogsClick({
-                      deploymentName,
-                      namespace,
-                      pods: pods.map(pod => ({
-                        name: pod.metadata?.name || '',
-                        namespace: pod.metadata?.namespace || 'default',
-                        status: pod.status?.phase
-                      })),
-                      clusterName
-                    })}
-                  >
-                    View All Logs ({pods.length})
-                  </Button>
-                </TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  );
-};
 
 interface PodLogsTableProps {
   pods: V1Pod[];
@@ -425,7 +320,7 @@ export const KubernetesContentWithLogs = () => {
     }
   }, [modalData]);
 
-  const errorMessage = typeof error === 'string' ? error : error?.message || 'Unknown error';
+  const errorMessage = typeof error === 'string' ? error : (error as Error)?.message || 'Unknown error';
 
   return (
     <div className={classes.contentWrapper}>
