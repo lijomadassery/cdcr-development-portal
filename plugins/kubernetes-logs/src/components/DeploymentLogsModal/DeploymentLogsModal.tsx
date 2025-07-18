@@ -147,8 +147,8 @@ export const DeploymentLogsModal = ({
   // Assign colors to pods
   const podColors = useMemo(() => {
     const colors: Record<string, string> = {};
-    displayPods.forEach((pod, index) => {
-      colors[pod.name] = POD_COLORS[index % POD_COLORS.length];
+    displayPods.forEach((pod) => {
+      colors[pod.name] = POD_COLORS[Object.keys(colors).length % POD_COLORS.length];
     });
     return colors;
   }, [displayPods]);
@@ -250,7 +250,7 @@ export const DeploymentLogsModal = ({
                       {pod.name}
                     </Typography>
                     {errors[pod.name] && (
-                      <Chip size="small" label="Error" color="error" />
+                      <Chip size="small" label="Error" color="secondary" />
                     )}
                   </Box>
                 }

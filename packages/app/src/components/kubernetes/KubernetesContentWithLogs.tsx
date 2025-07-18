@@ -4,9 +4,6 @@ import {
 } from '@backstage/plugin-kubernetes';
 import { useEntity } from '@backstage/plugin-catalog-react';
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
   Grid,
   Typography,
   Chip,
@@ -23,7 +20,6 @@ import {
   Portal,
   Button,
 } from '@material-ui/core';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import DescriptionIcon from '@material-ui/icons/Description';
 import { 
   StatusOK,
@@ -87,20 +83,7 @@ interface V1Deployment {
   };
 }
 
-const useStyles = makeStyles((theme: import('@material-ui/core/styles').Theme) => ({
-  accordion: {
-    marginTop: theme.spacing(2),
-  },
-  logsCell: {
-    width: 100,
-    textAlign: 'center',
-  },
-  containerChip: {
-    margin: theme.spacing(0.5),
-  },
-  statusCell: {
-    width: 120,
-  },
+const useStyles = makeStyles(() => ({
   contentWrapper: {
     position: 'relative',
   },
@@ -225,8 +208,6 @@ interface PodLogsTableProps {
 }
 
 const PodLogsTable = ({ pods, clusterName, onLogClick }: PodLogsTableProps) => {
-  const classes = useStyles();
-
   return (
     <TableContainer component={Paper} variant="outlined">
       <Table size="small">
@@ -234,9 +215,9 @@ const PodLogsTable = ({ pods, clusterName, onLogClick }: PodLogsTableProps) => {
           <TableRow>
             <TableCell>Pod Name</TableCell>
             <TableCell>Namespace</TableCell>
-            <TableCell className={classes.statusCell}>Status</TableCell>
+            <TableCell style={{ width: 120 }}>Status</TableCell>
             <TableCell>Containers</TableCell>
-            <TableCell className={classes.logsCell}>Logs</TableCell>
+            <TableCell style={{ width: 100, textAlign: 'center' }}>Logs</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -251,11 +232,11 @@ const PodLogsTable = ({ pods, clusterName, onLogClick }: PodLogsTableProps) => {
                     key={container.name}
                     label={container.name}
                     size="small"
-                    className={classes.containerChip}
+                    style={{ margin: '2px' }}
                   />
                 ))}
               </TableCell>
-              <TableCell className={classes.logsCell}>
+              <TableCell style={{ textAlign: 'center' }}>
                 <IconButton
                   size="small"
                   onClick={() => onLogClick({
@@ -350,11 +331,10 @@ export const KubernetesContentWithLogs = () => {
   }, []);
 
   // Memoize expensive computation to prevent re-calculation on every render
-  const { podsByCluster, deploymentsByCluster } = React.useMemo(() => {
+  const { podsByCluster } = React.useMemo(() => {
     const pods: Record<string, V1Pod[]> = {};
-    const deployments: Record<string, V1Deployment[]> = {};
 
-    if (!kubernetesObjects) return { podsByCluster: pods, deploymentsByCluster: deployments };
+    if (!kubernetesObjects) return { podsByCluster: pods };
 
     kubernetesObjects.items.forEach((item: any) => {
       const clusterName = item.cluster.name;
@@ -362,12 +342,8 @@ export const KubernetesContentWithLogs = () => {
       if (!pods[clusterName]) {
         pods[clusterName] = [];
       }
-      if (!deployments[clusterName]) {
-        deployments[clusterName] = [];
-      }
 
-      // Look for pods and deployments in the resources
-      // First, let's see what types we're getting
+      // Look for pods in the resources
       console.log('🔍 All resource types in cluster', clusterName, ':', 
         item.resources.map((r: any) => r.type).join(', '));
       
@@ -375,15 +351,11 @@ export const KubernetesContentWithLogs = () => {
         if (resource.type === 'pods') {
           const podList = resource.resources as V1Pod[];
           pods[clusterName].push(...podList);
-        } else if (resource.type === 'deployments' || resource.type === 'deployments.v1.apps') {
-          const deploymentList = resource.resources as V1Deployment[];
-          deployments[clusterName].push(...deploymentList);
-          console.log('🎯 Found deployments:', deploymentList.length);
         }
       });
     });
 
-    return { podsByCluster: pods, deploymentsByCluster: deployments };
+    return { podsByCluster: pods };
   }, [kubernetesObjects]);
 
   // Group pods by their owner (ReplicaSet/Deployment pattern)
@@ -445,7 +417,6 @@ export const KubernetesContentWithLogs = () => {
     [podsByCluster]
   );
 
-
   // Debug logging - only log when modal state changes to reduce render noise
   React.useEffect(() => {
     console.log('🔍 KubernetesContentWithLogs mounted, version: deployment-logs-v3');
@@ -454,13 +425,15 @@ export const KubernetesContentWithLogs = () => {
     }
   }, [modalData]);
 
+  const errorMessage = typeof error === 'string' ? error : error?.message || 'Unknown error';
+
   return (
     <div className={classes.contentWrapper}>
       {/* Custom logs interface - primary content */}
       {loading ? (
         <Typography>Loading Kubernetes resources...</Typography>
       ) : error ? (
-        <Typography color="error">Error loading Kubernetes resources: {error.message}</Typography>
+        <Typography color="error">Error loading Kubernetes resources: {errorMessage}</Typography>
       ) : (
         <Grid container spacing={2} direction="column">
           <Grid item>
@@ -512,9 +485,9 @@ export const KubernetesContentWithLogs = () => {
                                 <TableCell>{namespace}</TableCell>
                                 <TableCell>{group.pods.length}</TableCell>
                                 <TableCell>
-                                  <Box display="flex" flexDirection="column" gap={1}>
+                                  <Box display="flex" flexDirection="column" style={{ gap: '8px' }}>
                                     {group.pods.map((pod) => (
-                                      <Box key={pod.metadata?.name} display="flex" alignItems="center" gap={1}>
+                                      <Box key={pod.metadata?.name} display="flex" alignItems="center" style={{ gap: '8px' }}>
                                         {getPodStatus(pod)}
                                         <Typography variant="body2">{pod.metadata?.name}</Typography>
                                         <IconButton

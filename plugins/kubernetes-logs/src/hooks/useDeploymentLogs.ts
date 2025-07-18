@@ -78,45 +78,16 @@ export const useDeploymentLogs = ({
         follow: follow.toString(),
       });
       
-      const proxyPath = `/api/proxy/v1/clusters/${clusterName}/api/v1/namespaces/${namespace}/pods/${podName}/log?${params}`;
+      const path = `/api/v1/namespaces/${namespace}/pods/${podName}/log?${params}`;
       
-      if (follow) {
-        // Use EventSource for streaming logs
-        const eventSource = new EventSource(
-          `${kubernetesApi.getProxy()}${proxyPath}`,
-          {
-            withCredentials: true,
-          }
-        );
-        
-        eventSourcesRef.current[podName] = eventSource;
-        
-        let accumulatedLogs = '';
-        
-        eventSource.onmessage = (event) => {
-          accumulatedLogs += event.data + '\n';
-          setLogsData(prev => ({ ...prev, [podName]: accumulatedLogs }));
-        };
-        
-        eventSource.onerror = (error) => {
-          console.error(`EventSource error for pod ${podName}:`, error);
-          setErrors(prev => ({ ...prev, [podName]: 'Failed to stream logs' }));
-          setLoading(prev => ({ ...prev, [podName]: false }));
-          eventSource.close();
-        };
-        
-        eventSource.onopen = () => {
-          setLoading(prev => ({ ...prev, [podName]: false }));
-        };
-      } else {
-        // Use regular fetch for non-streaming logs
-        const response = await fetch(
-          `${kubernetesApi.getProxy()}${proxyPath}`,
-          {
-            signal: abortController.signal,
-            credentials: 'include',
-          }
-        );
+      // Use the kubernetesApi.proxy method instead of direct fetch
+      const response = await kubernetesApi.proxy({
+        clusterName,
+        path,
+        init: {
+          signal: abortController.signal,
+        },
+      });
         
         if (!response.ok) {
           throw new Error(`Failed to fetch logs: ${response.statusText}`);
