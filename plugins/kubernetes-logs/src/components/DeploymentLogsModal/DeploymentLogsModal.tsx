@@ -229,7 +229,7 @@ export const DeploymentLogsModal = ({
           variant="scrollable"
           scrollButtons="auto"
         >
-          {displayPods.map((pod, index) => {
+          {displayPods.map((pod) => {
             const statusInfo = getPodStatusIcon(pod.status || '');
             return (
               <Tab
