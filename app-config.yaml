@@ -154,11 +154,9 @@ kubernetes:
           authProvider: 'serviceAccount'
           skipTLSVerify: true
           namespace: backstage-local
-  objectTypes:
-    - 'pods'
-    - 'services'
-    - 'deployments'
-    - 'replicasets'
+  # Removed objectTypes to fetch all Kubernetes resources by default
+  # This enables full Kubernetes plugin features including:
+  # - ConfigMaps, Secrets, Ingresses, HPAs, Jobs, CronJobs, DaemonSets, StatefulSets, etc.
   # clusterLocatorMethods:
   #   - type: 'config'
   #     clusters:
