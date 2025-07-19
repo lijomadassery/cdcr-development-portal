@@ -11,6 +11,9 @@ metadata:
     backstage.io/kubernetes-id: cdcr-development-portal
     backstage.io/kubernetes-namespace: backstage-local
     backstage.io/techdocs-ref: dir:.
+    # GitOps/Flux annotations for GitOps tab functionality
+    flux.weave.works/git-repository: cdcr-development-portal
+    flux.weave.works/git-repository-namespace: backstage-local
   tags:
     - backstage
     - portal
