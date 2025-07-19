@@ -87,16 +87,8 @@ m
 - Support for multi-cluster build tracking and deployment pipelines
 - **Custom Plugin Implementation for Logs:** Added custom logging plugin to track and aggregate logs across different Kubernetes clusters
 
-## Log Window & Deployment Logs Feature ✅
-- **Individual Pod Logs**: Custom log window plugin for tracking application logs across multiple Kubernetes clusters
-- **Deployment Logs Feature (NEW)**: Tabbed interface for viewing logs from all pods in a deployment simultaneously
-  - DeploymentLogsModal component with color-coded tabs and status indicators
-  - useDeploymentLogs hook for concurrent log fetching from multiple pods
-  - Pod grouping by deployment ownership (ReplicaSet pattern)
-  - Search, follow, timestamps, and download all logs functionality
-  - **Critical**: Only appears for deployments with >1 pod (expected behavior)
-  - **Testing**: Scale deployment with `kubectl scale deployment backstage --replicas=2`
-  - **Location**: Pod Logs tab → "Applications (Grouped Pods)" section → "View All Logs (X)" buttons
+## Log Window
+- Implemented a custom log window plugin for tracking application logs across multiple Kubernetes clusters
 - Provides centralized log aggregation and real-time log streaming
 - Supports filtering and searching logs by namespace, pod, and time range
 - Integrated with Kubernetes API for seamless log retrieval

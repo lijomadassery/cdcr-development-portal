@@ -46,7 +46,7 @@ import {
   isKubernetesAvailable,
   EntityKubernetesContent,
 } from '@backstage/plugin-kubernetes';
-import { EnhancedKubernetesContent } from '../kubernetes/EnhancedKubernetesContent';
+import { KubernetesContentWithLogs } from '../kubernetes/KubernetesContentWithLogs';
 
 
 import {
@@ -159,7 +159,7 @@ const serviceEntityPage = (
       title="Pod Logs"
       if={isKubernetesAvailable}
     >
-      <EnhancedKubernetesContent />
+      <KubernetesContentWithLogs />
     </EntityLayout.Route>
 
     <EntityLayout.Route path="/dependencies" title="Dependencies">
@@ -216,7 +216,7 @@ const websiteEntityPage = (
       title="Pod Logs"
       if={isKubernetesAvailable}
     >
-      <EnhancedKubernetesContent />
+      <KubernetesContentWithLogs />
     </EntityLayout.Route>
 
     <EntityLayout.Route path="/dependencies" title="Dependencies">
