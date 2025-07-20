@@ -1,4 +1,4 @@
-aimport React from 'react';
+import React from 'react';
 import { 
   useKubernetesObjects,
 } from '@backstage/plugin-kubernetes';
