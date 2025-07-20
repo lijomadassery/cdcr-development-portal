@@ -26,6 +26,14 @@ import { LogsViewer } from '../LogsViewer';
 import { useDeploymentLogs } from '../../hooks/useDeploymentLogs';
 
 const useStyles = makeStyles(theme => ({
+  dialogPaper: {
+    height: '85vh',
+    maxHeight: '90vh',
+    width: '85vw',
+    maxWidth: '1400px',
+    resize: 'both',
+    overflow: 'auto',
+  },
   dialogTitle: {
     margin: 0,
     padding: theme.spacing(2),
@@ -40,8 +48,7 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
     display: 'flex',
     flexDirection: 'column',
-    height: '70vh',
-    minHeight: 500,
+    height: 'calc(100% - 64px)', // Account for title and actions
   },
   controls: {
     padding: theme.spacing(2),
@@ -137,6 +144,7 @@ export const DeploymentLogsModal = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [follow, setFollow] = useState(false);
   const [showTimestamps, setShowTimestamps] = useState(true);
+  const [wordWrap, setWordWrap] = useState(true);
 
   // Limit pods to maxPods
   const displayPods = useMemo(() => 
@@ -196,9 +204,12 @@ export const DeploymentLogsModal = ({
     <Dialog
       open={open}
       onClose={onClose}
-      maxWidth="lg"
+      maxWidth={false}
       fullWidth
       aria-labelledby="deployment-logs-dialog-title"
+      PaperProps={{
+        className: classes.dialogPaper,
+      }}
     >
       <DialogTitle disableTypography className={classes.dialogTitle}>
         <Typography variant="h6">
@@ -291,9 +302,21 @@ export const DeploymentLogsModal = ({
             label="Timestamps"
           />
           
+          <FormControlLabel
+            control={
+              <Switch
+                checked={wordWrap}
+                onChange={e => setWordWrap(e.target.checked)}
+                color="primary"
+              />
+            }
+            label="Word Wrap"
+          />
+          
           <IconButton 
             onClick={() => activePod && refetchPod(activePod.name)} 
             disabled={loading[activePod?.name || '']}
+            title="Refresh"
           >
             <RefreshIcon />
           </IconButton>
@@ -324,6 +347,7 @@ export const DeploymentLogsModal = ({
                 logs={activePodLogs} 
                 searchTerm={searchTerm}
                 follow={follow}
+                wordWrap={wordWrap}
               />
             </Box>
           )}
