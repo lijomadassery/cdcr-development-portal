@@ -13,12 +13,10 @@ import {
   makeStyles,
   FormControlLabel,
   Switch,
-  Paper,
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import RefreshIcon from '@material-ui/icons/Refresh';
-import WrapTextIcon from '@material-ui/icons/WrapText';
 import { LogsViewer } from '../LogsViewer';
 import { usePodLogs } from '../../hooks';
 

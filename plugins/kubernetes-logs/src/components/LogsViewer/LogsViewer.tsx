@@ -117,7 +117,6 @@ export const LogsViewer = ({ logs, searchTerm, follow, wordWrap = true }: LogsVi
     ];
 
     // Apply patterns
-    let colorizedLine = line;
     const replacements: Array<{ start: number; end: number; element: React.ReactNode }> = [];
 
     patterns.forEach(({ regex, className }) => {
@@ -145,7 +144,7 @@ export const LogsViewer = ({ logs, searchTerm, follow, wordWrap = true }: LogsVi
 
     // Build the final colorized line
     lastIndex = 0;
-    nonOverlapping.forEach((replacement, idx) => {
+    nonOverlapping.forEach((replacement) => {
       if (replacement.start > lastIndex) {
         parts.push(line.substring(lastIndex, replacement.start));
       }
