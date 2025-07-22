@@ -145,6 +145,7 @@ export const DeploymentLogsModal = ({
   const [follow, setFollow] = useState(false);
   const [showTimestamps, setShowTimestamps] = useState(true);
   const [wordWrap, setWordWrap] = useState(true);
+  const [showPrevious, setShowPrevious] = useState(false);
 
   // Limit pods to maxPods
   const displayPods = useMemo(() => 
@@ -173,6 +174,7 @@ export const DeploymentLogsModal = ({
     clusterName,
     follow,
     timestamps: showTimestamps,
+    previous: showPrevious,
   });
 
   const handleTabChange = useCallback((_: React.ChangeEvent<{}>, newValue: number) => {
@@ -214,6 +216,14 @@ export const DeploymentLogsModal = ({
       <DialogTitle disableTypography className={classes.dialogTitle}>
         <Typography variant="h6">
           Deployment Logs: {deploymentName}
+          {showPrevious && (
+            <Chip 
+              label="Previous Container" 
+              size="small" 
+              color="secondary" 
+              style={{ marginLeft: 8 }}
+            />
+          )}
         </Typography>
         <IconButton
           aria-label="close"
@@ -283,9 +293,27 @@ export const DeploymentLogsModal = ({
           <FormControlLabel
             control={
               <Switch
+                checked={showPrevious}
+                onChange={e => {
+                  setShowPrevious(e.target.checked);
+                  // Disable follow mode when viewing previous logs
+                  if (e.target.checked) {
+                    setFollow(false);
+                  }
+                }}
+                color="primary"
+              />
+            }
+            label="Previous"
+          />
+          
+          <FormControlLabel
+            control={
+              <Switch
                 checked={follow}
                 onChange={e => setFollow(e.target.checked)}
                 color="primary"
+                disabled={showPrevious}
               />
             }
             label="Follow"

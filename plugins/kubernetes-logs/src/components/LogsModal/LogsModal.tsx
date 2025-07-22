@@ -13,6 +13,7 @@ import {
   makeStyles,
   FormControlLabel,
   Switch,
+  Chip,
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import GetAppIcon from '@material-ui/icons/GetApp';
@@ -82,6 +83,7 @@ export const LogsModal = ({
   const [follow, setFollow] = useState(false);
   const [showTimestamps, setShowTimestamps] = useState(true);
   const [wordWrap, setWordWrap] = useState(true);
+  const [showPrevious, setShowPrevious] = useState(false);
   
   console.log('🔍 LogsModal props:', {
     open,
@@ -98,6 +100,7 @@ export const LogsModal = ({
     clusterName,
     follow,
     timestamps: showTimestamps,
+    previous: showPrevious,
   });
 
   console.log('🔍 LogsModal state:', {
@@ -136,6 +139,14 @@ export const LogsModal = ({
         <Typography variant="h6">
           Pod Logs: {podName}
           {containerName && ` / ${containerName}`}
+          {showPrevious && (
+            <Chip 
+              label="Previous Container" 
+              size="small" 
+              color="secondary" 
+              style={{ marginLeft: 8 }}
+            />
+          )}
         </Typography>
         <IconButton
           aria-label="close"
@@ -160,9 +171,27 @@ export const LogsModal = ({
           <FormControlLabel
             control={
               <Switch
+                checked={showPrevious}
+                onChange={e => {
+                  setShowPrevious(e.target.checked);
+                  // Disable follow mode when viewing previous logs
+                  if (e.target.checked) {
+                    setFollow(false);
+                  }
+                }}
+                color="primary"
+              />
+            }
+            label="Previous"
+          />
+          
+          <FormControlLabel
+            control={
+              <Switch
                 checked={follow}
                 onChange={e => setFollow(e.target.checked)}
                 color="primary"
+                disabled={showPrevious}
               />
             }
             label="Follow"

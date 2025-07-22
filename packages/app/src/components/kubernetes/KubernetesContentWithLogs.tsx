@@ -53,6 +53,33 @@ interface V1Container {
   image?: string;
 }
 
+interface V1ContainerStatus {
+  name: string;
+  ready: boolean;
+  restartCount: number;
+  state?: {
+    running?: any;
+    terminated?: {
+      exitCode: number;
+      reason: string;
+      message?: string;
+      startedAt?: string;
+      finishedAt?: string;
+    };
+    waiting?: {
+      reason: string;
+      message?: string;
+    };
+  };
+  lastState?: {
+    terminated?: {
+      exitCode: number;
+      reason: string;
+      message?: string;
+    };
+  };
+}
+
 interface V1PodSpec {
   containers?: V1Container[];
 }
@@ -60,6 +87,7 @@ interface V1PodSpec {
 interface V1PodStatus {
   phase?: string;
   conditions?: any[];
+  containerStatuses?: V1ContainerStatus[];
 }
 
 interface V1Pod {
@@ -78,6 +106,24 @@ const useStyles = makeStyles(() => ({
 
 const getPodStatus = (pod: V1Pod): React.ReactElement => {
   const phase = pod.status?.phase || 'Unknown';
+  const containerStatuses = pod.status?.containerStatuses || [];
+  
+  // Check for any crashed/waiting containers
+  const hasCrashedContainer = containerStatuses.some(cs => 
+    cs.state?.terminated || cs.state?.waiting || cs.restartCount > 0
+  );
+  
+  const hasWaitingContainer = containerStatuses.some(cs => 
+    cs.state?.waiting && ['CrashLoopBackOff', 'ErrImagePull', 'ImagePullBackOff'].includes(cs.state.waiting.reason)
+  );
+  
+  if (hasWaitingContainer) {
+    return <StatusError />;
+  }
+  
+  if (hasCrashedContainer && phase === 'Running') {
+    return <StatusPending />; // Running but with issues
+  }
   
   switch (phase.toLowerCase()) {
     case 'running':
@@ -92,6 +138,11 @@ const getPodStatus = (pod: V1Pod): React.ReactElement => {
     default:
       return <StatusAborted />;
   }
+};
+
+const getRestartCount = (pod: V1Pod): number => {
+  const containerStatuses = pod.status?.containerStatuses || [];
+  return containerStatuses.reduce((total, cs) => total + (cs.restartCount || 0), 0);
 };
 
 
@@ -111,41 +162,64 @@ const PodLogsTable = ({ pods, clusterName, onLogClick }: PodLogsTableProps) => {
             <TableCell>Pod Name</TableCell>
             <TableCell>Namespace</TableCell>
             <TableCell style={{ width: 120 }}>Status</TableCell>
+            <TableCell style={{ width: 80 }}>Restarts</TableCell>
             <TableCell>Containers</TableCell>
             <TableCell style={{ width: 100, textAlign: 'center' }}>Logs</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {pods.map((pod) => (
-            <TableRow key={`${pod.metadata?.namespace}-${pod.metadata?.name}`}>
-              <TableCell>{pod.metadata?.name || 'Unknown'}</TableCell>
-              <TableCell>{pod.metadata?.namespace || 'default'}</TableCell>
-              <TableCell>{getPodStatus(pod)}</TableCell>
-              <TableCell>
-                {pod.spec?.containers?.map((container: V1Container) => (
-                  <Chip
-                    key={container.name}
-                    label={container.name}
-                    size="small"
-                    style={{ margin: '2px' }}
-                  />
-                ))}
-              </TableCell>
-              <TableCell style={{ textAlign: 'center' }}>
-                <IconButton
-                  size="small"
-                  onClick={() => onLogClick({
-                    podName: pod.metadata?.name || '',
-                    namespace: pod.metadata?.namespace || 'default',
-                    clusterName
+          {pods.map((pod) => {
+            const restartCount = getRestartCount(pod);
+            return (
+              <TableRow key={`${pod.metadata?.namespace}-${pod.metadata?.name}`}>
+                <TableCell>{pod.metadata?.name || 'Unknown'}</TableCell>
+                <TableCell>{pod.metadata?.namespace || 'default'}</TableCell>
+                <TableCell>{getPodStatus(pod)}</TableCell>
+                <TableCell>
+                  {restartCount > 0 ? (
+                    <Chip 
+                      label={restartCount} 
+                      size="small" 
+                      color={restartCount > 5 ? 'secondary' : 'default'}
+                      title={`Pod has restarted ${restartCount} time${restartCount !== 1 ? 's' : ''}`}
+                    />
+                  ) : (
+                    '0'
+                  )}
+                </TableCell>
+                <TableCell>
+                  {pod.spec?.containers?.map((container: V1Container) => {
+                    const containerStatus = pod.status?.containerStatuses?.find(cs => cs.name === container.name);
+                    const hasIssue = containerStatus && (containerStatus.restartCount > 0 || containerStatus.state?.terminated || containerStatus.state?.waiting);
+                    return (
+                      <Chip
+                        key={container.name}
+                        label={`${container.name}${containerStatus?.restartCount ? ` (${containerStatus.restartCount})` : ''}`}
+                        size="small"
+                        style={{ margin: '2px' }}
+                        color={hasIssue ? 'secondary' : 'default'}
+                        title={hasIssue ? `Container has issues - Restarts: ${containerStatus?.restartCount}` : undefined}
+                      />
+                    );
                   })}
-                  data-testid="logs-button"
-                >
-                  <DescriptionIcon fontSize="small" />
-                </IconButton>
-              </TableCell>
-            </TableRow>
-          ))}
+                </TableCell>
+                <TableCell style={{ textAlign: 'center' }}>
+                  <IconButton
+                    size="small"
+                    onClick={() => onLogClick({
+                      podName: pod.metadata?.name || '',
+                      namespace: pod.metadata?.namespace || 'default',
+                      clusterName
+                    })}
+                    data-testid="logs-button"
+                    title={restartCount > 0 ? 'View logs (use Previous toggle for crashed container logs)' : 'View logs'}
+                  >
+                    <DescriptionIcon fontSize="small" />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
     </TableContainer>

@@ -10,6 +10,7 @@ export interface UsePodLogsOptions {
   follow?: boolean;
   timestamps?: boolean;
   tailLines?: number;
+  previous?: boolean;
 }
 
 export interface UsePodLogsResult {
@@ -27,6 +28,7 @@ export const usePodLogs = ({
   follow = false,
   timestamps = true,
   tailLines = 1000,
+  previous = false,
 }: UsePodLogsOptions): UsePodLogsResult => {
   const kubernetesApi = useApi(kubernetesApiRef);
   const [logs, setLogs] = useState('');
@@ -70,6 +72,10 @@ export const usePodLogs = ({
 
       if (follow) {
         queryParams.append('follow', 'true');
+      }
+
+      if (previous) {
+        queryParams.append('previous', 'true');
       }
 
       // Construct the path for the logs endpoint
@@ -144,6 +150,7 @@ export const usePodLogs = ({
     follow,
     timestamps,
     tailLines,
+    previous,
   ]);
 
   useEffect(() => {
@@ -157,7 +164,7 @@ export const usePodLogs = ({
         abortControllerRef.current.abort();
       }
     };
-  }, [podName, namespace, clusterName, follow, timestamps, tailLines]);
+  }, [podName, namespace, clusterName, follow, timestamps, tailLines, previous]);
 
   return {
     logs,

@@ -15,6 +15,7 @@ interface UseDeploymentLogsOptions {
   follow?: boolean;
   timestamps?: boolean;
   tailLines?: number;
+  previous?: boolean;
 }
 
 interface UseDeploymentLogsResult {
@@ -32,6 +33,7 @@ export const useDeploymentLogs = ({
   follow = false,
   timestamps = true,
   tailLines = 1000,
+  previous = false,
 }: UseDeploymentLogsOptions): UseDeploymentLogsResult => {
   const kubernetesApi = useApi(kubernetesApiRef);
   
@@ -77,6 +79,10 @@ export const useDeploymentLogs = ({
         timestamps: timestamps.toString(),
         follow: follow.toString(),
       });
+      
+      if (previous) {
+        params.append('previous', 'true');
+      }
       
       const path = `/api/v1/namespaces/${namespace}/pods/${podName}/log?${params}`;
       
